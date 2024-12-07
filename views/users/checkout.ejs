@@ -1,0 +1,436 @@
+
+    <%- include('partials/header')%>
+
+    <section class="h-100 h-custom " style="background-color: #ffffff;">
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center  h-100 ">
+            <div class="col-12">
+              <div class="card card-registration card-registration-2 " style="border-radius: 15px;">
+                <div class="card-body p-0">
+                  <div class="row g-0">
+                    <div class="col-lg-8">
+                      <div class="p-5">
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                          <h1 class="fw-bold mb-0 text-black">Delivery address</h1>
+                        </div>
+                        <hr class="my-4">
+      
+                        <button id="add" class=" form-control text-start text-primary" style="border: 1px solid #c6c6c6;"><H6>+ ADD ADDRESS</H6></button>
+
+                        <form action="/addaddresscheckout" id="addAddressForm" method="post" class=" rounded  form-container mt-1" style="border: 1px solid #c6c6c6;">
+                         <div class="container">
+                              <H6 class="m-3  text-primary">ADD A NEW ADDRESSES</H6>
+                           <div class="row ">
+                              <div class="form-group m-2  col-5">
+                                  <label for="Name">Name:</label>
+                                  <input type="text" id="Name" name="name" required class="form-control mt-2" placeholder="Enter your name">
+                              </div>
+                  
+                              <div class="form-group m-2 col-5">
+                                  <label for="mobile">Mobile:</label>
+                                   <input type="text" id="mobile" name="mobile" required class="form-control mt-2" placeholder="Enter mobile number" value="+91">
+                              </div>
+                  
+                              <div class="form-group m-2  col-5">
+                                  <label for="pincode">Pincode:</label>
+                                   <input type="text" id="pincode" name="pincode" required class="form-control mt-2" placeholder="Enter your pincode">
+                              </div>
+                  
+                              <div class="form-group m-2  col-5">
+                                  <label for="locality">Locality:</label>
+                                   <input type="text" id="locality" name="locality" required class="form-control mt-2" placeholder="Enter your locality">
+                              </div>
+                  
+                              <div class="form-group m-2  col-10">
+                                  <label for="address">Address(Area and Street):</label>
+                                  <textarea id="Address" name="address" class="form-control " rows="4" placeholder="Enter your address" required></textarea>
+                              </div>
+                  
+                              <div class="form-group m-2  col-5">
+                                  <label for="district">District/City/Town:</label>
+                                   <input type="text" id="district" name="district" required class="form-control " placeholder="Enter District/City/Town">
+                              </div>
+                  
+                              <div class="form-group m-2  col-5">
+                                <label for="indianStates">State:</label>
+                                  <select id="indianStates" class="form-select" aria-label="Select Indian State" name="state">
+                                      <option selected disabled>Select State</option>
+                                      <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                      <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                      <option value="Assam">Assam</option>
+                                      <option value="Bihar">Bihar</option>
+                                      <option value="Chhattisgarh">Chhattisgarh</option>
+                                      <option value="Goa">Goa</option>
+                                      <option value="Gujarat">Gujarat</option>
+                                      <option value="Haryana">Haryana</option>
+                                      <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                      <option value="Jharkhand">Jharkhand</option>
+                                      <option value="Karnataka">Karnataka</option>
+                                      <option value="Kerala">Kerala</option>
+                                      <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                      <option value="Maharashtra">Maharashtra</option>
+                                      <option value="Manipur">Manipur</option>
+                                      <option value="Meghalaya">Meghalaya</option>
+                                      <option value="Mizoram">Mizoram</option>
+                                      <option value="Nagaland">Nagaland</option>
+                                      <option value="Odisha">Odisha</option>
+                                      <option value="Punjab">Punjab</option>
+                                      <option value="Rajasthan">Rajasthan</option>
+                                      <option value="Sikkim">Sikkim</option>
+                                      <option value="Tamil Nadu">Tamil Nadu</option>
+                                      <option value="Telangana">Telangana</option>
+                                      <option value="Tripura">Tripura</option>
+                                      <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                      <option value="Uttarakhand">Uttarakhand</option>
+                                      <option value="West Bengal">West Bengal</option>
+                                  </select>
+                                  
+                              </div>
+                  
+                              <div class="form-group m-3 mb-5 col-6">
+                                  <label for="Gender">Address type:</label>
+                                  <div class="container mt-2">
+                                      <input type="radio" id="home" name="type" value="home"  >
+                                      <label for="home">Home</label>
+                          
+                                      <input type="radio" id="work" name="type" value="work"  >
+                                      <label for="work">Work</label>
+                                  </div>
+                              </div>
+                  
+                              <div class="form-group text-start mb-3">
+                                  <button type="submit" id="save" class="btn  mt-2 col-2 text-white " style="background-color: #d2bdbd;">SAVE</button>
+                                  <button type="cancel" id="Cancel" class="btn btn-light mt-2 text-primary " >CANCEL</button>
+                              </div>
+                  
+                  
+                            </div>
+                         </div>
+                       </form>
+
+                       <form  id="checkoutForm">
+                        <% user.address.forEach((address,index)=>{  %>
+                         
+                          <div class="container form-control mt-4 mb-4" style="border: 1px solid #c6c6c6;">
+                           <div class="row">
+                            <div class="col-1 d-flex ">
+                              <input type="radio" class="mt-2"  id="address" name="deliveryaddress" value="<%=address._id%>" <% if ( index==0) { %>checked<% } %> >
+                            </div>
+                             <div class="col-9">
+                            <span class="fw-bold text-capitalize"> <%=address.name%> +<%=address.mobile%>  (<%=address.type%> address)</span> <br>
+                             <%=address.address%>. <%=address.locality%>,<br>
+                             <%=address.district%>, <%=address.state%> - <%=address.pincode%>
+                            </div>
+                            <!-- <div class="col-2 d-flex flex-column align-items-center">
+                             <a href="/editaddress?id=<%=address._id%>" class="btn btn-light btn-block mb-2 px-3">EDIT</a>
+                            </div> -->
+                           </div>
+                          </div>
+                     <% }) %>
+                       
+                    
+      
+                     
+      
+                     
+                      </div>
+                    
+                    </div>
+                    <div class="col-lg-4 bg-grey">
+                      <div class="p-5">
+                        <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
+                        <hr class="my-4">
+      
+                        
+                        <div class="d-flex justify-content-between mb-4">
+                          <h5 class="text-uppercase">Sub total</h5>
+                          <h5>₹ <%= totalsum%>.00</h5>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-4">
+                          <h5 class="text-uppercase">Delivery charges -</h5>
+                          <h5 class="text-success text-uppercase">₹<%=Math.round(totalsum*0.03 )%>.00</h5>
+                          </div>
+
+                          <div class="d-flex justify-content-between mb-4">
+                            <h5 class="text-uppercase">Discount -</h5>
+                            <h5 id="discount" class="text-success text-uppercase">₹0.00</h5>
+                            </div>
+        
+                            
+                            <input type="hidden" id="couponUsed" name="couponUsed" >
+                            <input type="hidden" id="discountinput" name="discount">
+                            <input type="hidden" id="shippinginput" name="shipping" value="<%=Math.round(totalsum*0.03 )%>">
+                            <input type="hidden" id="totalinput" name="total">
+                            <input type="hidden" id="subtotal" name="subtotal" value="<%= totalsum%>">
+        
+                          <hr class="my-4">
+        
+                          <div class="d-flex justify-content-between mb-5">
+                            <h5 class="text-uppercase">Total price</h5>
+                            <h5 id="total">₹ <%= Math.round((totalsum*3)/100 )+totalsum%>.00</h5>
+                          </div>
+                        
+
+                        <div class="d-flex justify-content-between mb-5">
+                          <input type="radio"  id="cod" name="paymenttype" value="cod" checked >
+                          <h6 for="cod" class="fw-bold ">Cash on delivery</h6>
+
+                          <input type="radio" id="op" name="paymenttype" value="online" >
+                          <h6 for="online" class="fw-bold mb-2">Online payment</h6>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-5"> <input type="radio" id="wallet" name="paymenttype" value="wallet" >
+                          <h6 id="payFromWallet" for="wallet" class="fw-bold mb-2" >Pay from wallet </h6><h6 id="balanceDisplay" class="fw-bold mb-2">(Balance - ₹ <%=balance%>)</h6>
+                        </div>
+                       
+
+
+      
+                       <button type="submit" class="btn btn-dark btn-block btn-lg "
+                          data-mdb-ripple-color="dark">CHECKOUT</button>
+                        </form>
+
+
+                        <h5 class="text-uppercase mt-3 mb-3">Enter coupon code</h5>
+          
+                        <div class="mb-5 text-center">
+                          <div class="form-outline">
+                            <h6 class=" text-warning" id="couponErr"></h6>
+                            <input type="text" id="couponinput" class="form-control form-control-lg" />
+                          </div>
+                          <button id="applyCouponBtn" onclick="applyCoupon('<%=totalsum%>')" class="btn btn-primary m-2">Apply coupon </button>
+                          <button id="removeCouponBtn" class="btn btn-secondary m-2" style="display:none;">Remove Coupon</button>
+                           
+                          <div class="form-control form-control-lg " style=" height: 50vh;  overflow: auto;">
+                            <% coupons.forEach((coupon)=>{%> 
+                            <div class="row m-1 " >
+                             <div class="col-7 text-start couponcodes"><h6><%=coupon.Couponcode%></h6></div> 
+                             <div class="col-2 couponcodes"><h6 class="text-warning"><%=coupon.discount%>%</h6></div> 
+                             <div class="col-2"> <button onclick="enterCoupon('<%=coupon.Couponcode%>','<%=coupon.discount%>')" class="btn btn-light border border-danger">Select</button></div> 
+                              </div>
+                            <hr class="my-2">
+                            <% })%>
+                            
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+      <script>
+        $(document).ready(function () {
+            $("#addAddressForm").hide();
+    
+            $("#add").click(function () {
+                $("#add").hide();
+                $("#addAddressForm").show();
+            })
+    
+            $("#Cancel").click(function () {
+                // Hide the form
+                $("#add").show();
+                clear();
+                $("#addAddressForm").hide();
+            });
+            
+            function clear(){
+                $("#addAddressForm input[type='text']").val("");
+                $("#addAddressForm textarea").val("");
+                $("#addAddressForm select").val("Select State");
+                $("#addAddressForm input[type='radio']").prop("checked", false);
+            }
+        })
+    
+       
+    </script>
+    <script>
+      $("#checkoutForm").submit((e)=>{
+        e.preventDefault();
+        $.ajax({
+          url: "/checkout",
+          type: "POST",
+          data: $("#checkoutForm").serialize(),
+          contentType: 'application/x-www-form-urlencoded',
+          success:(response)=>{
+    
+            console.log("data from server",response)
+            if(response.codSuccess)
+            {
+              window.location.href='/ordersuccess'
+            }
+            else if(response.online){
+              console.log("order",response.online)
+              razorpayPayment(response.online);
+
+            }
+          }
+        })
+      })
+      function  razorpayPayment(order){
+        console.log("price",order.amount)
+        var options = {
+    "key": "rzp_test_2AcYHcIvfHSsku", // Enter the Key ID generated from the Dashboard
+    "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Mini store",
+    "description": "Test Transaction",
+    "image": "companytitle/title.png",
+    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        varifyPayment(response,order)
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.open();
+      }
+      function  varifyPayment(payment,order){
+        $.ajax({
+          url: "/varifypayment",
+          type: "POST",
+          data: {payment , order},
+          success:(response)=>{
+            if(response.status){
+              window.location.href='/ordersuccess'
+            }
+            else{
+              alert(response.err)
+            }
+          }
+        })
+      }
+    </script>
+
+    <script>
+      function enterCoupon(code,percentage){
+        console.log("entering code");
+      $('#couponinput').val(code);
+
+    }
+
+    async function applyCoupon(total) {
+    var couponCode = $('#couponinput').val();
+
+   
+    console.log("Applying coupon:", couponCode);
+    
+        const response = await fetch(`/applycoupon?code=${couponCode}&total=${total}`);
+        const data = await response.json();
+        console.log("Response data:", data);
+       
+        if(data.status){
+          const err = data.err;
+          const discountPrice = data.discount;
+          $("#discount").text("- ₹"+discountPrice +".00");
+          const shipping = Math.round(0.03 * total)
+         const Totalsum = ( total - discountPrice ) + shipping;
+         $("#couponUsed").val(couponCode);
+          $("#totalinput").val(Totalsum);
+          $("#discountinput").val(discountPrice)
+         $("#total").text("₹"+Totalsum+".00");
+          $("#couponErr").text(err);
+
+           //checking total for wallet
+      handleBalanceAndTotal();
+        // Hide Remove Coupon button and show Apply Coupon button
+          $("#removeCouponBtn").show();
+      $("#applyCouponBtn").hide();
+        }
+        else{
+         const err = data.err;
+         $("#couponErr").text(err)
+        }
+
+
+}
+
+
+$(document).ready(function () {
+    // Add event listener for Remove Coupon button
+    $("#removeCouponBtn").click(function () {
+      // Clear coupon-related inputs and hide the Remove Coupon button
+      $("#couponUsed").val('');
+      $("#discount").text('₹0.00');
+      $("#totalinput").val($("#subtotal").val());
+      $("#discountinput").val('0');
+      $("#total").text('₹' + $("#subtotal").val());
+      $("#couponErr").text('');
+
+      //checking total for wallet
+      handleBalanceAndTotal();
+      // Hide Remove Coupon button and show Apply Coupon button
+      $("#removeCouponBtn").hide();
+      $("#applyCouponBtn").show();
+    });
+  });
+
+    </script>
+    <script>
+      function handleBalanceAndTotal() {
+    var balance = '<%=balance%>';
+    var total =  $('#total').text();
+    var numTotal = parseFloat(total.replace(/[^\d.]/g, ''));
+    console.log("checked wallet")
+    if (balance === "0" || numTotal > balance) {
+        $('#wallet').prop('disabled', true);
+        $('#payFromWallet, #balanceDisplay').css('filter', 'blur(1px)');
+        $("#balanceDisplay").css("color", "red");
+    } else {
+        $('#wallet').prop('disabled', false);
+        $('#payFromWallet, #balanceDisplay').css('filter', 'none');
+        $("#balanceDisplay").css("color", ""); // Reset to default color
+    }
+}
+      $(document).ready(function() {
+          
+        handleBalanceAndTotal();
+
+      });
+  </script>
+  <script>
+    $(document).ready(function() {
+      $("#addAddressForm").submit(function(event) {
+        // Get the value of the mobile number input field
+        var mobileNumber = $("#mobile").val();
+  
+        // Check if the mobile number starts with "+91"
+        if (!mobileNumber.startsWith("+91")) {
+          // Prevent the form from submitting
+          event.preventDefault();
+  
+          // Show an alert to the user
+          alert("Mobile number should start with '+91'.");
+        } else if (mobileNumber.length !== 13) {
+          // Prevent the form from submitting
+          event.preventDefault();
+  
+          // Show an alert to the user
+          alert("Mobile number should have 10 digits after '+91'.");
+        }
+      });
+    });
+  </script>
+  
+</body>
+</html>

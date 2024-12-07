@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet"
+integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+crossorigin="anonymous"
+/>
+<link
+href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+rel="stylesheet"
+/>
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+rel="stylesheet"
+/>
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+  padding: 0;
+ 
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+ 
+.sidebar a.active {
+  background-color: #f03b17;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+.btn {
+        border: 1px solid #c6c6c6;
+      }
+      output{
+  width: 100%;
+  min-height: 150px;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 15px;
+  position: relative;
+  border-radius: 5px;
+}
+
+output .image{
+  height: 150px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  position: relative;
+}
+
+output .image img{
+  height: 100%;
+  width: 100%;
+}
+
+output .image span {
+  position: absolute;
+  top: -4px;
+  right: 4px;
+  cursor: pointer;
+  font-size: 22px;
+  color: white;
+}
+
+output .image span:hover {
+  opacity: 0.8;
+}
+
+output .span--hidden{
+  visibility: hidden;
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <a class="" href="/admin">DASHBOARD</a>
+   <a class="nav-link" href="/admin/user"> USERS</a>
+  <a class="active" href="/admin/product"> PRODUCTS </a>
+  <a class="nav-link" href="/admin/category"> CATEGORY</a>
+  <a class="nav-link" href="/admin/Company">BRAND</a>
+  <a class="nav-link" href="/admin/order"> ORDERS </a>
+  <a class="nav-link" href="/admin/salesreport"> SALES REPORT </a>
+  <a class="nav-link" href="/admin/slides">SLIDES</a>
+  <a class="nav-link" href="/admin/coupon">COUPONS</a>
+</div>
+
+<div class="content">
+
+  <%- include('partials/header')%>
+  <main class="container mt-3 py-4">
+      
+    <div class="mid bg-light p-3 rounded mx-auto">
+        
+      <form action="/admin/editproduct" method="post" onsubmit="return validateForm()" enctype="multipart/form-data" class="form-container mt-1">
+        <div class="form-group">
+
+          <div class="text-warning " id="errordis"><%= data %></div>
+          <label for="Name">Name:</label>
+          <input type="text" id="Name" name="name" required class="form-control" value="<%=product.name%>">
+        </div>
+
+        <div class="form-group">
+          <label for="price">Price:</label>
+          <input type="number" id="priceInput" name="price" value="<%=product.price%>" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="company">Company:</label>
+          <select id="company" name="company" class="form-control">
+              <option value="" disabled>Select Company</option>
+              <% company.forEach(function(company) { %>
+                  <option value="<%= company._id %>" <%= product.company.toString() === company._id.toString() ? 'selected' : '' %> ><%= company.name %></option>
+              <% }); %>
+          </select>
+      </div>
+
+        <div class="form-group">
+          <label for="category">Category:</label>
+          <select id="categoryDropdown" name="category" class="form-control">
+              <option value="" disabled>Select Category</option>
+              <% category.forEach(function(category) { %>
+                  <option value="<%= category._id %>" <%= product.category.toString() === category._id.toString() ? 'selected' : '' %> ><%= category.name %></option>
+              <% }); %>
+          </select>
+      </div>
+      
+     
+      
+
+        <div class="form-group">
+          <label for="stock">Stock:</label>
+          <input type="number" id="stock" name="stock" required class="form-control" value="<%=product.stock%>">
+        </div>
+
+        <div class="form-group">
+          <label for="Status">Status:</label>
+          <select id="categoryDropdown" name="status" class="form-control">
+            <option value="published" <%= product.status==="published"? 'selected':''%>>Published</option>
+            <option value="draft"  <%= product.status==="draft"? 'selected':''%>>Draft</option>
+        </select>
+        </div>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <input type="text" id="description" name="description" required class="form-control" value="<%=product.description%>">
+        </div>
+
+        <div class="form-group">
+          <label for="Profession">Images:</label>
+          <input type="file"  name="images" id="images"  class="form-control" multiple>
+          <output class="m-2"></output>
+        </div>
+       <input type="hidden" value="<%=product._id%>" name="id">
+        <div class="form-group text-center">
+          <button type="submit" class="btn btn-primary mt-2">EDIT</button>
+        </div>
+
+      </form>
+      <div class="row">
+        <% product.img.forEach((image, imageIndex) => { %>
+            <div class="col-3">
+             
+                <a href="/admin/deleteimage?id=<%=product._id %>&image=<%=image %>" onclick="return askPermission(this.href);" class="btn btn-danger ">Delete</a>
+            
+            <img src="<%= image %>" alt="Product Image <%= imageIndex + 1 %>" style="max-width: 100%; height: auto; max-height: 100px; min-width: 30%;">
+            
+   </div>
+        <% }); %>
+    </div>
+      </div>
+
+</main>
+ 
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  function askPermission(link) {
+    // Display a confirmation dialog
+    var confirmation = confirm("Are you sure ?");
+
+    // If the user clicks "OK," allow navigation
+    if (confirmation) {
+      window.location.href = link;
+    }
+    // If the user clicks "Cancel," prevent navigation
+    else {
+      return false;
+    }
+  }
+</script>
+<script>
+  function validateForm() {
+    var fileInput = document.getElementById('images');
+    var selectedFiles = fileInput.files;
+  
+    // Define allowed file extensions
+    var allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+
+    // Check if all selected files have allowed extensions
+    for (var i = 0; i < selectedFiles.length; i++) {
+        var file = selectedFiles[i];
+        var fileName = file.name.toLowerCase();
+        var fileExtension = fileName.split('.').pop(); // Get the file extension
+        
+        if (!allowedExtensions.includes(fileExtension)) {
+            document.getElementById("errordis").innerHTML='Please select only image files with extensions: ' + allowedExtensions.join(', ');
+            return false; // Prevent form submission
+        }
+    }
+
+    return true; // Allow form submission
+}
+</script>
+<script>
+ $(document).ready(function() {
+    // Function to fetch categories
+    function fetchCategories(companyId) {
+        $.ajax({
+            url: '/admin/getCategories', // Replace this with your server endpoint to fetch categories
+            type: 'GET',
+            data: { companyId: companyId },
+            success: function(categories) {
+              var productCategoryFound = false; 
+                $('#categoryDropdown').empty();
+                if (categories.length === 0) {
+                    $('#categoryDropdown').append('<option value="" disabled selected > No categories available</option>');
+                } else {
+                    categories.forEach(function(category) {
+                     
+                        var option = '<option value="' + category._id + '"';
+                        // Add the selected attribute if the condition is met
+                        if('<%=product.company.toString()%>'===companyId.toString()){
+                        if ('<%= product.category.toString()%>' === category._id.toString()) {
+                            option += ' selected';
+                            productCategoryFound = true;
+                        } }
+                        option += '>' + category.name + '</option>';
+                        $('#categoryDropdown').append(option);
+                    });
+                    if (!productCategoryFound) {
+                    $('#categoryDropdown').prepend('<option value="" disabled selected>Select category</option>');
+                }
+                }
+            },
+            error: function(err) {
+                console.error('Error fetching categories: ', err);
+            }
+        });
+    }
+
+    // Fetch categories on page load
+    fetchCategories($('#company').val());
+
+    // Handle company change event
+    $('#company').change(function() {
+        var companyId = $(this).val();
+        // Fetch categories when company selection changes
+        fetchCategories(companyId);
+    });
+});
+
+</script>
+<script>
+  const output = $("output");
+  const input = $("#images");
+  let imagesArray = [];
+
+  input.on("change", () => {
+    imagesArray = [];
+      const files = input[0].files;
+      for (let i = 0; i < files.length; i++) {
+          imagesArray.push(files[i]);
+      }
+      displayImages();
+  });
+
+  function displayImages() {
+      let images = "";
+      imagesArray.forEach((image, index) => {
+          images += `<div class="image">
+              <img src="${URL.createObjectURL(image)}" alt="image">
+              <span onclick="deleteImage(${index})">&times;</span>
+            </div>`;
+      });
+      output.html(images);
+  }
+
+  function deleteImage(index) {
+    imagesArray.splice(index, 1);
+    displayImages();
+
+    // Clear the file input
+    input.val('');
+
+    // Create a new FileList object
+    let newFileList = new DataTransfer();
+
+    // Add files back to the new FileList object
+    imagesArray.forEach(file => {
+        newFileList.items.add(file);
+    });
+
+    // Set the files to the file input
+    input[0].files = newFileList.files;
+
+    // Dispatch a change event to update the file input
+    input.trigger('change');
+}
+</script>
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+crossorigin="anonymous"
+></script>
+</body>
+</html>

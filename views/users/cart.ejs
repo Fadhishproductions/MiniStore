@@ -1,0 +1,159 @@
+<%- include('partials/header')%>
+    
+        <section class="h-100 h-custom " style="background-color: #ffffff;">
+            <div class="container py-5 h-100">
+              <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12">
+                  <div class="card card-registration card-registration-2 mt-4" style="border-radius: 15px;">
+                    <div class="card-body p-0">
+                      <div class="row g-0">
+                        <div class="col-lg-8">
+                          <div class="p-5">
+                            <div class="d-flex justify-content-between align-items-center mb-5">
+                              <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
+                              <% if(!cart){%>
+                                <h1 class="text-center  mt-4 py-4">Cart Is Empty</h1>
+                                <%   }else{ %>
+                              <h6 class="mb-0 text-muted"><%= cartproducts.length %> items</h6>
+                            </div>
+                            <hr class="my-4">
+          <% cartproducts.forEach((cart,index)=>{ %>
+
+         
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                             
+                              <div class="col-md-2 col-lg-2 col-xl-2">
+                                <a href="singleproduct?id=<%=cart.productinfo._id %>" class="text-decoration-none text-dark " >
+                                <img
+                                  src="<%=cart.productinfo.img[0]%>"
+                                  class="img-fluid rounded-3" alt="product image">
+                                </a>
+                              </div>
+                              <div class="col-md-3 col-lg-3 col-xl-3">
+                                <a href="singleproduct?id=<%=cart.productinfo._id %>" class="text-decoration-none text-dark " >
+                                <h6 class="text-muted"><%=cart.productinfo.category[0].name%></h6>
+                                <h6 class="text-black mb-0"><%=cart.productinfo.name%></h6>
+                              </a>
+                              </div>
+                           
+                              <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                            
+                                <button id="down<%= cart.productinfo._id %>"  class="btn btn-dark px-2" <%= cart.quantity ===1 ? 'disabled' : '' %>
+                                  onclick="quantityUp('<%= cart.productinfo._id %>','<%= cart.productinfo.stock %>',-1)">
+                                  <i class="bi bi-dash-lg"></i>
+                                </button>
+                              
+          
+                                <input id="input<%= cart.productinfo._id %>" min="00" name="quantity" value="<%=cart.quantity%>" type="number" disabled
+                                  class="form-control form-control-sm text-center col-1" />
+          
+                                  <button id="up<%= cart.productinfo._id %>"  class="btn btn-dark px-2" <%= cart.quantity == cart.productinfo.stock ? 'disabled' : '' %>
+                                  onclick="quantityUp('<%= cart.productinfo._id %>','<%= cart.productinfo.stock %>',1)"> 
+                                  <i class="bi bi-plus"></i>
+                                  </button>
+                              </div>
+                              <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                <h6 class="mb-0">₹ <%=cart.totalPrice%></h6>
+                              </div>
+                              <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                               
+                                <button onclick="confirmDelete('<%= cart.productinfo._id %>')" class="btn text-muted "><i class="bi bi-x-lg"></i></button>
+                              </div>
+                            </div>
+          
+                            <hr class="my-4">
+                   <%  }) %>
+                            
+                           
+          
+                         
+          
+                         
+                          </div>
+                        </div>
+                        <div class="col-lg-4 bg-grey">
+                          <div class="p-5">
+                            <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
+                            <hr class="my-4">
+          
+                            <div class="d-flex justify-content-between mb-4">
+                              <h5 class="text-uppercase">items <%= cartproducts.length %></h5>
+                              <h5 id="total">  ₹ <%= totalsum %>.00</h5>
+                            </div>
+          
+                            <h6 class="text-uppercase mb-3">Shipping</h6>
+          
+                            <div class="d-flex justify-content-between mb-4">
+                            <h5 class="text-uppercase">Delivery charges -</h5>
+                            <h5 id="delivery" class="text-success text-uppercase">₹<%=Math.round((totalsum*3)/100) %>.00</h5>
+                            </div>
+          
+                           
+          
+                            <hr class="my-4">
+          
+                            <div class="d-flex justify-content-between mb-5">
+                              <h5 class="text-uppercase">Total price</h5>
+                              <h5 id="totalsum">₹ <%= Math.round((totalsum*3)/100) +totalsum%>.00</h5>
+                            </div>
+          
+                            <a href="/checkout"><button type="button" class="btn btn-dark btn-block btn-lg"
+                              data-mdb-ripple-color="dark">PLACE ORDER</button></a>
+          
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+   <% }%>
+   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+   <script>
+    function confirmDelete(productId) {
+        // Display a confirmation dialog
+        const userConfirmed = confirm("Are you sure you want to delete this item from the cart?");
+
+        // Check if the user confirmed
+        if (userConfirmed) {
+            // If confirmed, redirect to the deletecartitem endpoint with the product ID
+            window.location.href = "/deletecartitem?id=" + productId;
+        } else {
+            // If not confirmed, do nothing or provide feedback to the user
+            console.log("Deletion canceled");
+        }
+    }
+
+  async  function quantityUp(productId,stock,count){
+      // window.location.href = "/UpCartitem?id=" + productId;
+      const response = await fetch("/UpCartitem?id=" + productId + "&count=" +count);
+        const data = await response.json();
+        if(data.status){
+          const quantity = $("#input"+productId).val()
+          const updatedquantity = parseInt(quantity) + count;
+       console.log("updated",updatedquantity,typeof(updatedquantity))
+       console.log("#input"+productId)
+       const total = data.total;
+       const delivery = Math.round((data.total)*0.03);
+       const totalsum= total + delivery;
+         $("#input"+productId).val(updatedquantity);
+         $("#total").text("₹ "+total+".00");
+         $("#delivery").text("₹"+delivery+".00");
+         $("#totalsum").text("₹"+totalsum+".00")
+         $("#down"+productId).prop('disabled', false);
+         $("#up"+productId).prop('disabled', false);
+         console.log("stock",stock,)
+         if(updatedquantity==stock){
+          $("#up"+productId).prop('disabled', true);
+         }
+         if(quantity==2 && count== -1){
+          $("#down"+productId).prop('disabled', true);
+         }
+        }
+    }
+   
+</script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<%- include('partials/header') %>
+
+<div class="container-fluid rounded mt-5 " style="background-color: rgb(247, 247, 247);height: 7%;">
+    <div class="row">
+        <ul class="list-inline text-center my-auto">
+            <li class="list-inline-item m-2">
+                <a href="/allproducts" class="text-decoration-none fw-bold cat" style="font-family: inter_semi_bold,fallback-inter_semi_bold,Arial,sans-serif; font-size: 14px;display: flex;align-items: center;justify-content: center;">ALL PRODUCTS</a>
+            </li>
+            <% category.forEach((category, index) => { %>
+            <li class="list-inline-item m-2 ">
+                <a href="/categoryproducts?id=<%=category._id%>" class="text-decoration-none fw-bold cat" style="font-family: inter_semi_bold,fallback-inter_semi_bold,Arial,sans-serif; font-size: 14px;display: flex;align-items: center;justify-content: center;">
+                    <%=category.name%>
+                </a>
+            </li>
+            <% }) %>
+        </ul>
+    </div>
+</div>
+
+<div id="loading-container" >
+    <div id="loading" class="position-fixed top-50 start-50 translate-middle">
+        <!-- You can use a spinner or a simple loading message -->
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h6 class="m-2">ALL PRODUCTS</h6>
+    <div class="row">
+        <div class="col-lg-3">
+            <!-- Sidebar with filters -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Filter By</h5>
+                    <!-- Category Filter -->
+                    <h6>Category</h6>
+<ul id="category-filter" class="list-group">
+    <% category.forEach((category, index) => { %>
+    <li class="list-group-item">
+        <label class="form-check-label">
+            <input type="checkbox" id="category-<%=category._id%>" class="form-check-input category-filter" data-category="<%=category._id%>"> <%=category.name%>
+        </label>
+    </li>
+    <% }) %>
+</ul>
+
+<!-- Brand Filter -->
+<h6 class="mt-3">Brand</h6>
+<ul id="brand-filter" class="list-group">
+    <% brand.forEach((brand, index) => { %>
+    <li class="list-group-item">
+        <label class="form-check-label">
+            <input type="checkbox" id="brand-<%=brand._id%>" class="form-check-input brand-filter" data-brand="<%=brand._id%>"> <%=brand.name%>
+        </label>
+    </li>
+    <% }) %>
+</ul>
+
+<!-- Price Filter -->
+<h6 class="mt-3">Price</h6>
+<ul id="price-filter" class="list-group">
+    <li class="list-group-item">
+        <label class="form-check-label">
+            <input type="checkbox" id="price-below-1000" class="form-check-input price-filter" data-min="0" data-max="1000"> Below 1000
+        </label>
+    </li>
+    <li class="list-group-item">
+        <label class="form-check-label">
+            <input type="checkbox" id="price-1000-10000" class="form-check-input price-filter" data-min="1000" data-max="10000"> 1000 - 10000
+        </label>
+    </li>
+    <li class="list-group-item">
+        <label class="form-check-label">
+            <input type="checkbox" id="price-10000-20000" class="form-check-input price-filter" data-min="10000" data-max="20000"> 10000 - 20000
+        </label>
+    </li>
+    <li class="list-group-item">
+        <label class="form-check-label">
+            <input type="checkbox" id="price-20000-30000" class="form-check-input price-filter" data-min="20000" data-max="30000"> 20000 - 30000
+        </label>
+    </li>
+    <li class="list-group-item">
+        <label class="form-check-label">
+            <input type="checkbox" id="price-above-30000" class="form-check-input price-filter" data-min="30000" data-max="Infinity"> Above 30000
+        </label>
+    </li>
+</ul>
+
+
+<!-- Sort By Price -->
+<h6 class="mt-3">Sort By Price </h6> 
+<ul id="sort-filter" class="list-group">
+    <li class="list-group-item">
+        <label class="form-check-label">
+            <input type="radio" name="sort" id="sort-asc" class="form-check-input sort-filter" value="asc" <% if (query.sort === 'asc') { %> checked <% } %>> Low to High
+        </label>
+    </li>
+    <li class="list-group-item">
+        <label class="form-check-label">
+            <input type="radio" name="sort" id="sort-desc" class="form-check-input sort-filter" value="desc" <% if (query.sort === 'desc') { %> checked <% } %>> High to Low
+        </label>
+    </li>
+    <li class="list-group-item">
+        <label class="form-check-label">
+            <input type="radio" name="sort" id="sort-new" class="form-check-input sort-filter" value="new" <% if (query.sort === 'new') { %> checked <% } %>> Newest First
+        </label>
+    </li>
+</ul>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div id="product-list" class="col-lg-9">
+            
+            
+            <% if(product.length===0){%>
+                <div class="d-flex align-items-center justify-content-center  m-3  " style="height: 300px;">
+                  <h2 class="fw-bold ">No products find..!</h2>
+                 </div>
+                <%}else{%>
+              <div class="row mt-4">
+               
+                <% product.forEach((product) => { %>
+                <div class="col-12 mb-3 ">
+                  <div class="card">
+                    <div class="row g-0">
+                      <div class="col-md-4 p-5">
+                        <a href="singleproduct?id=<%=product._id%>" class="text-decoration-none text-dark">
+                          <img src="<%=product.img[0]%>" class="img-fluid" alt="product image" style="width: 80%;">
+                        </a>
+                      </div>
+                      <div class="col-md-8 pt-5">
+                        <div class="card-body mt-3">
+                          <a href="singleproduct?id=<%=product._id%>" class="text-decoration-none text-dark">
+                            <h5 class="card-title"><%= product.description %></h5>
+                            <h5 class="card-text">
+                              <% if (product.offer && product.offer !== null) { %>
+                                <span class="text-success " style="font-size:smaller" ><%= product.isoffer%>% off</span>
+                              <del class="text-secondary">₹<%= product.ogprice %></del>
+                              <% } %>
+                              ₹<%=product.price%>
+                              </h5>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <% }) %>
+              </div>
+              <%}%>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('#loading').hide();
+    // Event listener for filter and sorting options
+    function handleFilters() {
+       
+        // Construct the URL with filter parameters
+        let url = '/allproducts?';
+        const categoryFilters = $('.category-filter:checked').map(function () { return 'category=' + $(this).data('category'); }).get();
+        const brandFilters = $('.brand-filter:checked').map(function () { return 'brand=' + $(this).data('brand'); }).get();
+        const minPriceFilters = $('.price-filter:checked').map(function () { return 'minPrice=' + $(this).data('min'); }).get();
+        const maxPriceFilters = $('.price-filter:checked').map(function () { return 'maxPrice=' + $(this).data('max'); }).get();
+        const sortFilter = $('input[name="sort"]:checked').val();
+        
+        // Check if the sorting option is selected
+        if (sortFilter) {
+            url += 'sort=' + sortFilter + '&';
+        }
+
+        url += categoryFilters.concat(brandFilters, minPriceFilters, maxPriceFilters).join('&');
+
+        // Redirect the browser to the constructed URL
+        window.location.href = url;
+    }
+
+    // Check local storage for checkbox states on page load
+    function checkLocalStorage() {
+        $('.category-filter, .brand-filter, .price-filter').each(function () {
+            const checkboxId = $(this).attr('id');
+            const isChecked = localStorage.getItem(checkboxId);
+            if (isChecked === 'true') {
+                $(this).prop('checked', true);
+            }
+        });
+    }
+    
+
+    // Call the function to check local storage on page load
+    checkLocalStorage();
+
+    // Event listener for checkbox clicks
+    $('.category-filter, .brand-filter, .price-filter, .sort-filter').click(function () {
+        $('#loading').show();
+        handleFilters(); // Handle filters whenever there is a change
+        const checkboxId = $(this).attr('id');
+        localStorage.setItem(checkboxId, $(this).prop('checked'));
+    });
+});
+
+
+
+</script>
+
+
+
+
+

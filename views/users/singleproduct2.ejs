@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    
+   
+
+    <title>Document</title>
+    <style>
+      .container-fluid {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .btn {
+        border: 1px solid #c6c6c6;
+      }
+
+      /* Dropdown styling */
+      .dropdown {
+        font-size: 16px;
+        border: none;
+        outline: none;
+        color: white;
+        padding: 14px 16px;
+        background-color: inherit;
+        font-family: inherit;
+        margin: 0;
+        background-color: #ffffff;
+        min-width: 115px;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        background-color: aliceblue;
+        min-width: 160px;
+        z-index: 1; /* Ensure the dropdown is on top of other elements */
+      }
+
+      .dropdown-content a {
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+        color: black;
+        background-color: white;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+a.cat{
+  color:rgb(7, 15, 15);
+}
+      a.cat:hover {
+    color: rgb(38, 126, 112); /* Change this to your desired hover color */
+}
+.carousel-item img {
+    height: 400px; /* Set the desired height for the images */
+    object-fit: cover; /* Maintain aspect ratio and cover the entire container */
+  }
+  
+
+  @media  (max-width: 760px) {
+      .btn{
+        font-size: 10px;
+      }
+      .imgheight {
+        min-height: 100px;
+      }
+
+
+    }
+    @media (min-width: 767px) and (max-width: 987px) {
+      .imgheight {
+        min-height: 250px;
+      }
+      .hover-container {
+        width:150%
+      }
+    
+    }
+    #suggestionsContainer {
+        position: absolute;
+        width: 50%;
+        max-height: 150px;
+        margin-top: 5px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        background-color: #fff;
+      }
+
+      #suggestionsContainer div {
+        padding: 8px;
+        cursor: pointer;
+      }
+
+      #suggestionsContainer div:hover {
+        background-color: #f0f0f0;
+      }
+    #wishlist:hover{
+   background-color:  #f6f0f0;
+    }
+    </style>
+  </head>
+  <body>
+    <header class="position-fixed fixed-top bg-white">
+      <div class="container">
+      <div class="row ">
+        <div class="col-md-2 my-auto ">
+          <h5 class="brand-name text-start ">miniStore</h5>
+        </div>
+        <div class="col-md-6 col-sm-11 my-auto">
+          <form action="/search" method="post" onsubmit="return submitForm()">
+            <div class="input-group">
+              <input
+                type="search"
+                placeholder="Search your product"
+                class="form-control"
+                id="searchInput"
+                autocomplete="off" 
+                name="search"
+              />
+              <button class="btn btn-secondary"  type="submit">
+                <i class="fa fa-search"></i>
+              </button>
+            </div>
+          </form>
+          <div id="suggestionsContainer" class="rounded col-md-6 col-sm-11" style="z-index: 2;display: none;"></div>
+          <script>
+            const searchInput = document.getElementById("searchInput");
+            const suggestionsContainer = document.getElementById(
+              "suggestionsContainer"
+            );
+
+            searchInput.addEventListener("input", async () => {
+              const query = searchInput.value.trim();
+
+              // Clear previous suggestions
+              suggestionsContainer.style.display = 'block';
+              suggestionsContainer.innerHTML = "";
+
+              if (query !== "") {
+                const response = await fetch(`/autocomplete?query=${query}`);
+                const data = await response.json();
+
+                // Handle the data and update the autocomplete suggestions
+                data.forEach((suggestion) => {
+                  const suggestionElement = document.createElement("div");
+                  suggestionElement.textContent = suggestion;
+
+                  suggestionsContainer.appendChild(suggestionElement);
+                  suggestionElement.addEventListener("click", () => {
+                    // Update the input field with the clicked suggestion
+                    console.log("Suggestion Clicked:", suggestion);
+                    searchInput.value = suggestion;
+                    console.log("Input Field Value:", searchInput.value);
+                  });
+
+                 
+                });
+              } else{
+                suggestionsContainer.style.display = 'none';
+              }
+            });
+
+            // Hide suggestions when the input is cleared or loses focus
+            searchInput.addEventListener("blur", () => {
+              setTimeout(() => {
+                suggestionsContainer.style.display = 'none';
+                suggestionsContainer.innerHTML = "";
+              }, 200); // Adjust the delay based on your preference
+            });
+          </script>
+
+          <script>
+              function submitForm() {
+           var searchInput = document.getElementById('searchInput');
+           if (searchInput.value.trim() === '') {
+          // If input is empty, prevent form submission
+          return false;
+          }
+          // Allow form submission if input is not empty
+           return true;
+           }
+          </script>
+
+        </div>
+        <!-- ... (previous code) ... -->
+       
+        <div class="row  col  my-auto">
+          <div class=" col-3 col-md-3 my-auto">
+            <a class="nav-link" href="/">HOME </a>
+          </div>
+
+          <div class="dropdown col-4 col-md-4  text-dark">
+            <% if (varify) { %>
+            <a class="nav-link" href="/logout"
+              >LOGOUT
+              <i class="fa fa-caret-down"></i>
+            </a>
+            <% } else { %>
+              <a class="nav-link" href="/login"
+              >LOGIN
+              <i class="fa fa-caret-down"></i>
+              </a>
+              <% } %>
+            <div class="dropdown-content">
+              <a class="nav-link" href="#"> ORDERS </a>
+              <a class="nav-link" href="/wishlist">
+                WISHLIST
+                <i class="fa fa-heart"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="row col-4 col-md-4 my-auto">
+            <div class="col-6 col-md-6 my-auto ">
+              <a class="nav-link" href="/useraccount">
+                <i class="fa fa-user"></i>
+              </a>
+            </div>
+
+            <div class="col-6 col-md-6 my-auto  " style="max-width: 100% " >
+              <ul style=" list-style-type: none;margin: 0;padding: 0;">
+                <li style="display: inline-block;">
+                  <a class="nav-link " href="/cart">
+                  <i class="fa fa-shopping-cart "></i> 
+                </a>
+              </li>
+              <% if(count!=0){%>
+                <li style="display: inline-block;min-width: max-content;" class="bg-secondary text-white p-1 rounded"> <span class="bg-grey"><%=count%></span></li>
+               <% } %>
+            </ul>
+            </div>
+          </div>
+        </div>
+          
+         
+        <!-- ... (remaining code) ... -->
+      </div>
+    </div>
+    </header>
+
+<div class="container-fluid rounded  mt-5 " style="background-color: rgb(247, 247, 247);height: 7%;">
+  <div class="row">
+    <ul class="list-inline text-center">
+      <% category.forEach((category, index) => { %>
+        <li class="list-inline-item m-1 ">
+          <a href="/categoryproducts?id=<%=category._id%>" class=" text-decoration-none  fw-bold cat  " style="font-family:'Times New Roman', Times, serif;"><%=category.name%></a>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+  </div>
+<div class="container ">
+  <div class="row pt-2">
+    <div class="col-12 col-md-5 ">
+      <div class="img-container col-9 imgheight shadow-sm mx-3 d-flex align-items-center" style="width: 300px; height: 300px; overflow: hidden;">
+        <img id="zoom_01" src="<%=product.img[0]%>" alt="" class="img-fluid mt-2" style="max-width: 100%; max-height: 100%;">
+     </div>
+     <div class="hover-container row mt-1 d-flex justify-content-between col-8" >
+        <div class="col-3 col-md-3" ><img src="<%=product.img[0]%>" class="img-fluid border border-dark rounded m-1" alt="" style="max-width: 100%; height: 90%; width: auto;"></div>
+        <div class="col-3 col-md-3" ><img src="<%=product.img[1]%>" class="img-fluid border border-dark rounded m-1" alt="" style="max-width: 100%; height: 90%; width: auto;"></div>
+        <div class="col-3 col-md-3" ><img src="<%=product.img[2]%>" class="img-fluid border border-dark rounded m-1" alt="" style="max-width: 100%; height: 90%; width: auto;"></div>
+        <div class="col-3 col-md-3" ><img src="<%=product.img[3]%>" class="img-fluid border border-dark rounded m-1" alt="" style="max-width: 100%; height: 90%; width: auto;"></div>
+     </div>
+    </div>
+    <div class="col-12 col-md-7 p-3">
+      <div class="container ">
+        <h5 class="m-2"><%=product.description%></h5>
+        <h3 class="fw-bold mx-2"><%  if (product.offer && product.offer !== null) { %>
+          <span class="text-success " style="font-size:smaller" ><%= product.isoffer%>% off</span>
+          <del class="text-secondary">₹<%= product.ogprice %></del>
+          <% } %>
+          ₹<%=product.price%></h3>
+       <% if(product.stock!=0){ %> 
+        <h6 class=" mx-2 text-danger fw-bold" > <%=product.stock%> stocks left</h6>
+        <% }else{ %> 
+          <h6 class=" mx-2 text-danger fw-bold ">Out of stock</h6>
+          <% } %>
+        <h6>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Fuga saepe delectus dolore dolor repudiandae consectetur placeat neque accusantium molestiae molestias omnis officia debitis, quae ipsum nulla, rerum blanditiis. Ut, nisi! Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex, ducimus cupiditate quae temporibus esse voluptatibus omnis impedit dolore animi optio aliquam numquam pariatur, nemo eaque modi hic placeat odit mollitia.</h6>
+      <div class="row">
+        <div class="col-8 col-md-7  mt-4  rounded border border-dark mx-3 pt-2">
+         <select name="quantity" <%=product.stock==0?'disabled':'' %> id="quantity" class="col-12 rounded  border-0 border-light fw-bold"  >
+          <option value="1" selected>Quantity : 1</option>
+          <% for(var i=1; i<product.stock ; i++){ %>
+          <option value="<%= i+1 %>" >Quantity :    <%= i+1 %></option>
+          <% } %>
+         </select>
+        </div>
+        <div id="wishlist" class="col-1 mt-4  d-flex justify-content-center align-items-center rounded-circle border  <%= isInWishlist ? ' border-danger ' : 'border-dark '%> " style="width: 50px; height: 50px; overflow: hidden; padding: 5px;">
+          <a class="nav-link <%= isInWishlist ? ' bg-danger rounded-circle' : ' '%> " href="/addwishlist?id=<%=product._id%>">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bag-heart m-2 " viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M10.5 3.5a2.5 2.5 0 0 0-5 0V4h5zm1 0V4H15v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4h3.5v-.5a3.5 3.5 0 1 1 7 0M14 14V5H2v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1M8 7.993c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132"/>
+              </svg>
+          </a>
+       </div>
+      
+      
+       </div>
+
+       <div class="m-2 " > <% if(cartproduct){ %>
+        <a href="/cart"><button class="btn m-1 text-white col-4" style="width: 40%;background-color: #f8eeee;"><p class="m-1 text-dark "> GO TO CART</p></button></a>
+       <% }else{ %>
+     <button onclick="addToCart()" <%=product.stock==0?'disabled':'' %> class="btn m-1 text-white col-4" style="width: 40%;background-color: #ffbd03;"><p class="m-1"> ADD TO CART</p></button>
+       <% }%>
+       <a href=""><button class="btn m-1 text-white col-4" <%=product.stock==0?'disabled':'' %> style="width: 40%;background-color:  #aa443f;"><p class="m-1">BUY NOW</p></button></a>
+       </div>
+
+    </div>
+   </div>
+  </div>
+</div>
+
+<%- include('partials/footer')%>
+
+<script>
+  const allHoverImages = document.querySelectorAll('.hover-container div img');
+  const imgContainer = document.querySelector('.img-container');
+   
+  allHoverImages.forEach((image) => {
+      image.addEventListener('mouseover', () =>{
+          imgContainer.querySelector('img').src = image.src;
+          updateMainImage(image.src)
+          image.classList.remove('border', 'border-dark');
+          image.classList.add('border','border-primary');
+
+          allHoverImages.forEach((img)=>{
+             if(img !== image){
+                 img.classList.remove( 'border-primary');
+                 img.classList.add('border-dark');
+                }
+             })
+           });
+        });
+
+
+  </script>
+  <script>
+    function addToCart() {
+        // Get the selected value from the dropdown
+        var Quantity = document.getElementById("quantity").value;
+
+        window.location.href = "/addtocart?id=<%=product._id%>&Quantity=" + Quantity;
+
+        // For demonstration purposes, let's log the URL to the console
+        console.log("Add to Cart URL:", addToCartURL);
+    }
+</script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/igorlino/elevatezoom-plus/1.1.6/src/jquery.ez-plus.js"></script>
+<script>
+   function updateMainImage(imageSrc) {
+                    $("#zoom_01").ezPlus({easing:true,tint:true,tintColour: '#999',tintOpacity:0.5,scrollZoom:true});
+
+   }
+  src =  $("#zoom_01").src;
+  updateMainImage(src)
+</script>
+  </body>
+  </html>

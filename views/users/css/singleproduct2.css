@@ -1,0 +1,24 @@
+.imgheight{
+    min-height: 400px;
+  }
+
+  @media  (max-width: 760px) {
+      .btn{
+        font-size: 10px;
+      }
+      .imgheight {
+        min-height: 100px;
+      }
+
+
+    }
+    @media (min-width: 767px) and (max-width: 987px) {
+      .imgheight {
+        min-height: 250px;
+        
+      }
+      .hover-container {
+        width:150%
+      }
+    
+    }

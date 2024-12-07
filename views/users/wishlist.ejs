@@ -1,0 +1,90 @@
+<%- include('partials/header')%>
+    
+        <section class="h-100 h-custom " style="background-color: #ffffff;">
+            <div class="container py-5 h-100">
+              <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12">
+                  <div class="card card-registration card-registration-2 mt-4 " style="border-radius: 15px;">
+                    <div class="card-body p-0">
+                      <div class="row g-0">
+                        <div class="col-12">
+                          <div class="p-5">
+                            <div class="d-flex justify-content-between align-items-center mb-5">
+                              <h1 class="fw-bold mb-0 text-black">Wishlist</h1>
+                              <% if(wishlist.length===0){%>
+                                <h1 class="text-center  mt-4 py-4">Wishlist Is Empty</h1>
+                                <%   }else{ %>
+                              <h6 class="mb-0 text-muted"><%= wishlist.length %> items</h6>
+                            </div>
+                            <hr class="my-4">
+          <% wishlist.forEach((wishlist,index)=>{ %>
+
+         
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                             
+                                 <a href="singleproduct?id=<%=wishlist._id %>" class="text-decoration-none text-dark " >
+                              <div class="col-md-2 col-lg-2 col-xl-2">
+                               
+                                <img
+                                  src="<%=wishlist.img[0]%>"
+                                  class="img-fluid rounded-3" alt="product image">
+                                </a>
+                              </div>
+                           
+                              
+                              <div class="col-md-3 col-lg-3 col-xl-3">
+                                <h6 class="text-muted"><%=wishlist.stock%> Stock </h6>
+                                <h6 class="text-black mb-0"><%=wishlist.name%></h6>             
+                              </div>
+
+                             
+                              <div class="col-md-2 col-lg-2 col-xl-2 ">
+                                <h6 class="mb-0">₹ <%=wishlist.price%></h6>
+                              </div>
+
+
+                             
+
+                              <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                               
+                                <button onclick="confirmDelete('<%= wishlist._id %>')" class="btn text-muted"><i class="bi bi-x-lg"></i></button>
+                              </div>
+                            </div>
+          
+                            <hr class="my-4">
+                   <%  }) %>
+                            
+                           
+          
+                         
+          
+                         
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+   <% }%>
+   <script>
+    function confirmDelete(productId) {
+        // Display a confirmation dialog
+        const userConfirmed = confirm("Are you sure you want to delete this item from the cart?");
+
+        // Check if the user confirmed
+        if (userConfirmed) {
+            // If confirmed, redirect to the deletecartitem endpoint with the product ID
+            window.location.href = "/deletewishlistitem?id=" + productId;
+        } else {
+            // If not confirmed, do nothing or provide feedback to the user
+            console.log("Deletion canceled");
+        }
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<%- include('partials/header')%>
+
+<div class="container m-5 ">
+  <% if (data) { %>
+    <div class="alert alert-danger col-4 offset-4 align-self-center" style="height:min-content;"> <%= data %> </div>
+  <% } %>
+  
+  <div class="row py-4">
+    <div class="mid col-3 m-4 p-3 rounded mx-auto" style="background-color: #f4eff4;">
+      <div class="text-center">
+        <label for="form" class="fw-bold text-dark">VERIFY OTP</label>
+      </div>
+      <form id="otpForm" action="/varifyotp" method="post" class="form-container my-5">
+        <h6 id="errdis" class="text-danger "></h6>
+        <div class="form-group"></div>
+        <div class="form-group">
+          <label for="Email">ENTER OTP:</label>
+          <input type="text" id="otp" name="otp" required class="form-control">
+        </div>
+        <div class="form-group text-center">
+          <button type="submit" class="btn mt-2">VERIFY</button>
+        </div>
+      </form>
+      <div class="row">
+          <button class="btn mt-2 col-3 btn-secondary " id="resendButton" onclick="resendOTP()" disabled>Resend OTP</button>
+        <label for="timer" id="timer" class="col-3 mt-4">60s</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer')%>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script>
+  let seconds = 5;
+  let timerInterval;
+
+
+  function startTimer() {
+    timerInterval = setInterval(function () {
+      seconds--;
+      updateTimerDisplay();
+
+      if (seconds === 0) {
+        clearInterval(timerInterval);
+        enableButton();
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    document.getElementById("timer").innerText = seconds + "s";
+  }
+
+
+
+  function enableButton() {
+    const resendButton = document.getElementById("resendButton");
+    resendButton.removeAttribute("disabled");
+    resendButton.classList.remove("btn-secondary"); // Optional: Change button style after enabling
+    resendButton.classList.add("btn-primary"); // Optional: Change button style after enabling
+  }
+  function resendOTP() {
+    // Change the URL to the desired link
+    window.location.href = "/resendotp";
+  }
+  // Start the initial timer
+  startTimer();
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#otpForm').submit(function(e) {
+      e.preventDefault(); // Prevent form submission
+
+      // Serialize form data
+      var formData = $(this).serialize();
+
+      // Send AJAX request
+      $.ajax({
+        type: 'POST',
+        url: '/varifyotp', // Specify the URL for your server endpoint
+        data: formData,
+        success: function(response) {
+         if(response.success){
+          $('#errdis').text("your registration is succesfull");
+          alert("your registration is succesfull")
+          window.location.href='/login'
+         }else if(!response.success){
+          $('#errdis').text(response.msg);
+         }
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet"
+integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+crossorigin="anonymous"
+/>
+<link
+href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+rel="stylesheet"
+/>
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+rel="stylesheet"
+/>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+ 
+.sidebar a.active {
+  background-color: #f03b17;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+.btn {
+        border: 1px solid #c6c6c6;
+      }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <a class="" href="/admin">DASHBOARD</a>
+   <a class="nav-link" href="/admin/user"> USERS</a>
+  <a class="active" href="/admin/product"> PRODUCTS </a>
+  <a class="nav-link" href="/admin/category"> CATEGORY</a>
+  <a class="nav-link" href="/admin/Company">BRAND</a>
+  <a class="nav-link" href="/admin/order"> ORDERS </a>
+  <a class="nav-link" href="/admin/salesreport"> SALES REPORT </a>
+  <a class="nav-link" href="/admin/slides">SLIDES</a>
+  <a class="nav-link" href="/admin/coupon">COUPONS</a>
+</div>
+
+<div class="content">
+  <%- include('partials/header')%>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 m-2 btn-danger">
+                <a href="/admin/addproduct" class="btn btn-danger ">ADD PRODUCT</a>
+              </div>
+            <table id="myTable"  class=" mx-auto text-center " style="font-size: small;" >
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>NAME</th>
+                        <th>PRICE</th>
+                        <th>CATEGORY</th>
+                        <th>BRAND</th>
+                        <th>STOCK</th>
+                        <th>STATUS</th>
+                        <th>DESCRIPTION</th>
+                        <th>IMAGES</th>
+                        <th>Delete/Edit</th>
+                        <th>OFFER</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% products.forEach((product, index) => { %>
+                        <tr style="height: 20vh;" >
+                            <td class="fw-bold"><%= index + 1 %></td>
+                            <td><%= product.name %></td>
+                            <td id="price<%=product._id %>" ><%= product.price %></td>
+                            <td><%= product.category.name %></td>
+                            <td><%= product.company.name %></td>
+                            <td><%= product.stock %></td>
+    
+                            <td>
+                              <%= product.status %>
+                            </td>
+                            <td><%= product.description %></td>
+                            <td><div class="row">
+                                <% product.img.forEach((image, imageIndex) => { %>
+                                    <div class="col-3">
+                                    <img src="<%= image %>" alt="Product Image <%= imageIndex + 1 %>" style="max-width: 100%; height: auto; max-height: 100px; min-width: 30%;">
+                           </div>
+                                <% }); %>
+                            </div>
+                            </td>
+                            <td>
+                              <% if (product.status == 'published') { %>
+                                <div class="col-md-3 mt-2 btn-danger">
+                                    <a href="/admin/notpublished?id=<%=product._id %>" onclick="return askPermission(this.href);" class="btn btn-danger px-4">Draft</a>
+                                  </div>
+                            <% } else { %>
+                                <div class="col-md-3 mt-2 btn-danger">
+                                    <a href="/admin/published?id=<%=product._id %>" onclick="return askPermission(this.href);" class="btn btn-danger px-3">Publish</a>
+                                  </div>
+                            <% } %>
+                                  <div class="col-3 mt-1 btn-danger">
+                                    <a href="/admin/editproduct?id=<%=product._id %>" class="btn btn-danger mx-1" style=" width: 350%">Edit</a>
+                                  </div>
+                            </td>
+                            <td>
+                              <button id="addofferbutton<%=product._id %>" onclick="addoffer('<%=product._id %>','<%=product.name %>')" <% if (product.isoffer && product.isoffer !== null) { %> style="display: none;" <% } %>  class="col mt-2 btn btn-danger addofferbutton px-5">ADD OFFER</button>
+                                 
+                              <button id="removeofferbutton<%=product._id %>" onclick="removeoffer('<%=product._id %>')" <% if (!product.isoffer || product.isoffer == 0) { %> style="display: none;" <% } %> class="col mt-2 btn btn-danger" >REMOVE <%= product.offer ? product.offer.toUpperCase() : 'OFFER' %></button>
+                              
+                            </td>
+                        </tr>
+                        
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+       </div>
+
+<div>
+       <form  id="offerform"  class="form-container mt-1 col-4  rounded p-3 " style="position: absolute; top: 50%;left: 50%;transform: translate(-50%, -50%);display: none;box-shadow: 4px 10px 10px rgba(78, 72, 72, 0.5);background-color: #f1f1f1;">
+        <div class="form-group">
+        
+        </div>
+        <div class="form-group">
+          <p class="text-warning" id="offererror"></p>
+          <label for="id">PRODUCT NAME:</label>
+          <input type="text" id="productname" name="name" disabled required class="form-control">
+          <input type="hidden" name="id" id="productid">
+        </div>
+        <div class="form-group">
+          <label for="offer">OFFER (%):</label>
+          <input type="number" id="offer" name="offer" required class="form-control">
+        </div>
+    
+       
+        <div class="form-group text-center">
+          <button  type="submit" class="btn  mt-2">ADD OFFER</button>
+        </div>
+        <!-- <div class="col-md-3 mt-2">
+          <a href="/" class="btn btn-danger ">LOGIN</a>
+        </div> -->
+      </form>
+    </div>
+       <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+       <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
+<script>
+  $(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>
+<script>
+  function askPermission(link) {
+    // Display a confirmation dialog
+    var confirmation = confirm("Are you sure ?");
+
+    // If the user clicks "OK," allow navigation
+    if (confirmation) {
+      window.location.href = link;
+    }
+    // If the user clicks "Cancel," prevent navigation
+    else {
+      return false;
+    }
+  }
+</script>
+<script>
+function addoffer (productid,productname){
+  
+$("#productname").val(productname);
+$("#productid").val(productid);
+
+}
+
+function removeoffer (productid){
+  if (confirm("Are you sure you want to remove offer?")) {
+  $.ajax({
+          url: "/admin/removeoffer",
+          type: "POST",
+          data: { id: productid }, 
+          contentType: 'application/x-www-form-urlencoded',
+          success:(response)=>{
+            alert(response.msg)
+            console.log(response)
+            $("#price"+productid).text(response.price);
+            $("#removeofferbutton"+productid).hide();
+            $("#addofferbutton"+productid).show();
+          }
+        })
+      }
+}
+
+
+$(document).ready(function() {
+        // Show the form when a button is clicked
+        $('.addofferbutton').click(function(e) {
+            e.stopPropagation(); // Prevent event bubbling to the document
+            $('#offerform').show();
+        });
+
+        // Hide the form when the document body is clicked
+        $('body').click(function(e) {
+            if (!$(e.target).closest('#offerform').length) {
+              $("#offer").val('')
+                $('#offerform').hide();
+            }
+        });
+
+        // Prevent hiding the form when clicking inside the form
+        $('#offerform').click(function(e) {
+            e.stopPropagation(); // Prevent event bubbling to the document
+        });
+    });
+</script>
+<script>
+  $("#offerform").submit((e) => {
+    e.preventDefault();
+const offer = $("#offer").val()
+    // Ask for permission
+    if( offer<5 || offer>60){
+      $('#offererror').text('enter percentage (5-60)!');
+      
+    }else{
+    if (confirm("Are you sure you want to apply offer?")) {
+        $.ajax({
+            url: "/admin/addoffer",
+            type: "POST",
+            data: $("#offerform").serialize(),
+            contentType: 'application/x-www-form-urlencoded',
+            success: (response) => {
+                $('#offerform').hide();
+                $("#offer").val('');
+                alert(response.msg);
+                console.log(response);
+                const id = $("#productid").val();
+               $("#price"+id).text(response.price);
+                $("#removeofferbutton"+id).show();
+                $("#addofferbutton"+id).hide();
+            }
+        });
+    }}
+});
+
+</script>
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+crossorigin="anonymous"
+></script>
+</body>
+</html>

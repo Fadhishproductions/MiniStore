@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet"
+integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+crossorigin="anonymous"
+/>
+<link
+href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+rel="stylesheet"
+/>
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+rel="stylesheet"
+/>
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+ 
+.sidebar a.active {
+  background-color: #f03b17;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+
+ 
+ 
+
+  .chartBox {
+    width: 50%;
+    padding: 20px;
+    border-radius: 20px;
+    border: solid 3px rgba(54, 162, 235, 1);
+    background: white;
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar ">
+  <a class="active" href="/admin">DASHBOARD</a>
+   <a class="nav-link" href="/admin/user"> USERS</a>
+  <a class="nav-link" href="/admin/product"> PRODUCTS </a>
+  <a class="nav-link" href="/admin/category"> CATEGORY</a>
+  <a class="nav-link" href="/admin/Company">BRAND</a>
+  <a class="nav-link" href="/admin/order"> ORDERS </a>
+  <a class="nav-link" href="/admin/salesreport"> SALES REPORT </a>
+  <a class="nav-link" href="/admin/slides">SLIDES</a>
+  <a class="nav-link" href="/admin/coupon">COUPONS</a>
+</div>
+
+<div class="content  ">
+  <%- include('partials/header')%>
+
+  <h2 class="text-center">Welcome to admin dashboard</h2>
+
+  <div class="d-flex justify-content-between m-5 border border-secondary border-1 rounded p-2 shadow-sm">
+    <div class=" m-2 border border-secondary p-2 rounded shadow-sm" style="min-width: 20%;">
+     <h4 class="text-center"><%=orders.length%> </h4> <h4 class="text-center"> Orders</h4>
+    </div>
+    <div class=" m-2 border border-secondary p-2 rounded shadow-sm"style="min-width: 20%;">
+      <h4 class="text-center"><%=products.length%> </h4> <h4 class="text-center">Products </h4>
+    </div>
+    <div class=" m-2 border border-secondary p-2 rounded shadow-sm"style="min-width: 20%;">
+      <h4 class="text-center"><%=category.length%></h4>  <h4 class="text-center"> Categories</h4>
+    </div>
+    <div class=" m-2 border border-secondary p-2 rounded shadow-sm"style="min-width: 20%;">
+      <h4 class="text-center"> <%=users.length%></h4>  <h4 class="text-center">Users</h4>
+    </div>
+  </div>
+
+
+    <div class="chartBox">
+      <canvas id="myChart"></canvas>
+      <div class="d-flex justify-content-between m-2">
+      <input class="form-control " style="width: 30%;" type="month" onchange="filterCart(this)" />
+      <button class="btn btn-light text-primary" onclick="restoreChart()">This Year</button>
+      </div>
+    </div>
+  
+
+
+
+
+
+</div>
+
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+crossorigin="anonymous"
+></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script>
+  // Parse the dates and sales data
+  const dates = JSON.parse('<%- JSON.stringify(dates) %>');
+  const salesprice = JSON.parse('<%- JSON.stringify(salesprice) %>');
+ 
+
+  // Create an object to store total sales for each month
+  const monthlySales = {};
+  // Iterate through dates and aggregate sales for each month
+  dates.forEach((date, index) => {
+    const month = date.substring(0, 7); // Extract the year-month part of the date
+    if (!monthlySales[month]) {
+      monthlySales[month] = 0; // Initialize total sales for the month
+    }
+    monthlySales[month] += salesprice[index];
+  });
+const lastyear = dates[dates.length - 1].substring(0,4);
+console.log(lastyear,"lastyear")
+  // Extract the aggregated data for chart
+  const aggregatedDates = Object.keys(monthlySales);
+  const aggregatedSales = Object.values(monthlySales);
+
+  // Create Chart.js data
+  const data = {
+    labels: aggregatedDates,
+    datasets: [{
+      label: 'Total Sales per Month',
+      data: aggregatedSales,
+      backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      borderColor: 'rgba(54, 162, 235, 1)',
+      borderWidth: 1
+    }]
+  };
+
+  
+       
+  // Chart.js configuration
+  const config = {
+    type: 'bar',
+    data,
+    options: {
+      scales: {
+        x: {
+          min:`${lastyear}-01-01`,
+          max:`${lastyear}-12-31`,
+          type: 'time',
+          time: {
+            unit: 'month', // Display data by month
+            displayFormats: {
+              month: 'MMM yyyy' // Use 'yyyy' instead of 'YYYY'
+            }
+          }
+        },
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
+
+  // Render the chart
+  const myChart = new Chart(
+    document.getElementById('myChart'),
+    config
+  );
+  function restoreChart() {
+    myChart.config.options.scales.x={
+          min:`${lastyear}-01-01`,
+          max:`${lastyear}-12-31`,
+          type: 'time',
+          time: {
+            unit: 'month', // Display data by month
+            displayFormats: {
+              month: 'MMM yyyy' // Use 'yyyy' instead of 'YYYY'
+            }
+          }
+        }
+            myChart.update();
+        }
+
+  function filterCart(date) {
+  const year = date.value.substring(0, 4);
+  const month = date.value.substring(5, 7);
+
+const lastday = (y,m)=>{
+  return new Date(y,m,0).getDate()
+}
+
+
+  const startDate = `${date.value}-01`;
+  const endDate = `${date.value}-${lastday(year,month)}`;
+
+  // Update chart configuration
+  myChart.config.options.scales.x.time = {
+    unit: 'day',
+    displayFormats: {
+      day: 'dd MMM yyyy' // Format for displaying each day
+    }
+  };
+  myChart.config.options.scales.y.suggestedMax = 100000; 
+  myChart.config.options.scales.x.min = startDate;
+  myChart.config.options.scales.x.max = endDate;
+
+  // Update the chart
+  myChart.update();
+}
+
+       
+</script>
+
+  
+
+</body>
+</html>

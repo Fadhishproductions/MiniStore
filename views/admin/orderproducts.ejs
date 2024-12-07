@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet"
+integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+crossorigin="anonymous"
+/>
+<link
+href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+rel="stylesheet"
+/>
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+rel="stylesheet"
+/>
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+ 
+.sidebar a.active {
+  background-color: #f03b17;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar ">
+  <a class="nav-link" href="/admin">DASHBOARD</a>
+   <a class="nav-link" href="/admin/user"> USERS</a>
+  <a class="nav-link" href="/admin/product"> PRODUCTS </a>
+  <a class="nav-link" href="/admin/category"> CATEGORY</a>
+  <a class="nav-link" href="/admin/Company">BRAND</a>
+  <a class="active" href="/admin/order"> ORDERS </a>
+  <a class="nav-link" href="/admin/salesreport"> SALES REPORT </a>
+  <a class="nav-link" href="/admin/slides">SLIDES</a>
+  <a class="nav-link" href="/admin/coupon">COUPONS</a>
+</div>
+
+<div class="content">
+  <%- include('partials/header')%>
+  
+  
+  
+  <section class="h-100 h-custom " style="background-color: #ffffff;">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center  h-100">
+        <div class="col-12">
+          <div class="card card-registration card-registration-2 " style="border-radius: 15px;">
+            <div class="card-body p-0">
+              <div class="row g-0">
+                <div class="col-lg-8">
+                  <div class="p-5">
+                    <div class="d-flex justify-content-between align-items-center ">
+                      <h1 class="fw-bold mb-0 text-black" style='  font-family: "Courier New", Courier, monospace;'>Delivery Details</h1>
+                      <% if(productitems.length==0){%>
+                        <h1 class="text-center  mt-4 py-4">Order Cancelled</h1>
+                        <%   }else{ %>
+                      <h6 class="mb-0 text-muted"><%=productitems.length%> items</h6>
+                    </div>
+                    <hr class="my-4">
+                    
+
+                    <div class="container">
+
+                      <label for="name">Name:</label>
+                      <div class="col-12 form-group border rounded px-2 mt-1 mb-2 p-1"><%=orderData.address.name%></div>
+                      
+                      <label for="name">Mobile:</label>
+                      <div class="col-12 form-group border rounded px-2 mt-1 mb-2 p-1"><%=orderData.address.mobile%></div>
+
+                      <label for="name">Address:</label>
+                      <div class="col-12 form-group border rouded px-2 mt-1 mb-2 p-1"><%=orderData.address.address%></div>
+
+                      <label for="name">District:</label>
+                      <div class="col-12 form-group border rounded px-2 mt-1 mb-2 p-1"><%=orderData.address.district%></div>
+
+                      <label for="name">Pincode:</label>
+                      <div class="col-12 form-group border rounded px-2 mt-1 mb-2 p-1"><%=orderData.address.pincode%></div>
+                    </div>
+                    
+                   
+  
+                 
+  
+                 
+                  </div>
+                </div>
+                <div class="col-lg-4 bg-grey">
+                  <div class="p-5">
+                    <h3 class="fw-bold mb-5 mt-2 pt-1" style='  font-family: "Courier New", Courier, monospace;'>Order Details</h3>
+                    <hr class="my-4">
+  
+                    <table style="font-family: Garamond, serif;">
+                      <th class="col-7">Product</th>
+                      <th class="col-2">Price</th>
+                      <th class="col">Quantity</th>
+                      <% productitems.forEach((product)=>{%>
+                      <tr class="text-center ">
+                        <td>
+                          <div class="row">
+                            <div class="col-4">
+                              <img src="<%=product.productinfo.img[0]%>" class="img-fluid" alt="product image" style="width: 100%;">
+                            </div>
+                            <div class="col-8 d-flex align-items-center">
+                              <span class="fw-bold text-sm" style=" font-size: small;"><%=product.productinfo.name%></span>
+                            </div>
+                          </div>
+                        </td>
+                        <td><%=product.productinfo.price%></td>
+                        <td><%=product.quantity%></td>
+                       
+                        
+                      </tr>
+                      <%})%>
+                    </table>
+  
+                    <hr class="my-4">
+  
+
+                    <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                      <h5 class="text-uppercase">Subtotal </h5>
+                      <h5>₹ <%=orderData.subtotal%>.00</h5>
+                    </div>
+
+
+                    <hr class="my-4">
+
+                   
+
+                    <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                      <h5 class="text-uppercase">Delivery charge</h5>
+                    <%  if(!orderData.shipping){ %>
+                      <h5 class="text-success">₹ 00.00</h5>
+                   <% }else{%>
+                      <h5 class="text-warning">₹ <%=orderData.shipping%>.00</h5>
+                    <%}%>
+                    </div>
+
+
+                    <hr class="my-4">
+
+                    <%    if(orderData.coupon){ %>
+                      <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                        <h5 class="text-uppercase" >Coupon</h5>
+                        <h5 class="text-uppercase"><%=orderData.coupon%></h5>
+                      </div>
+    
+                      <hr class="my-4">
+  
+                    
+                 <%}%>
+
+                 <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                  <h5 class="text-uppercase" >Discount</h5>
+                  <h5 class="text-uppercase fw-bond text-success">- ₹ <%=orderData.discount%>.00</h5>
+                </div>
+
+                <hr class="my-4 " >
+
+                    <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                      <h5 class="text-uppercase">Total </h5>
+                      <h5>₹ <%=orderData.total%>.00</h5>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                      <h5 class="text-uppercase" >Payment mode</h5>
+                      <h5 class="text-uppercase"><%=orderData.paymentstatus%></h5>
+                    </div>
+  
+                    <hr class="my-4">
+
+                  
+                    <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                        
+                      <h5 class="text-uppercase " >Status</h5>
+                      <% if(orderData.orderstatus == "cancelled" || orderData.orderstatus == "completed" || orderData.orderstatus == "Returned" || orderData.orderstatus == "return requested" ){ %>
+
+                        <h5 id="statusbar" class="<%= (orderData.orderstatus === 'cancelled' || orderData.orderstatus === 'return requested' || orderData.orderstatus === 'Returned') ? 'bg-danger text-white' : (orderData.orderstatus === 'completed') ? 'bg-success text-white' : '' %> text-uppercase">
+                          <%= orderData.orderstatus %>
+                        </h5>
+                        
+                        <% } else {%>
+                          <form action="/admin/orderstatusupdate" method="post" class="col-8">
+                      <select name="status" id="status" class="rounded border col-12">
+                        <option value="pending" <%= orderData.orderstatus == "pending" ? 'selected' : '' %>> Pending</option>
+                        <option value="placed" <%= orderData.orderstatus == "placed" ? 'selected' : '' %>> Placed</option>
+                        <option value="shipping" <%= orderData.orderstatus == "shipping" ? 'selected' : '' %>> Shipping</option>
+                        <option value="cancelled" <%= orderData.orderstatus == "cancelled" ? 'selected' : '' %>> Cancel</option>
+                        <option value="completed" <%= orderData.orderstatus == "completed" ? 'selected' : '' %>> Completed</option>
+                        <option value="payment failed" <%= orderData.orderstatus == "payment failed" ? 'selected' : '' %>> Payment failed</option>
+                      </select>
+                    </div>
+          
+                    <input type="hidden" name="orderid" value="<%=orderData._id%>">
+                    <div class=" m-2 text-center"><button type="submit" class="btn btn-light" style="width: max-content;">Update Status</button></div>
+                  </form>
+                  <% } %>
+                 
+  
+                  </div>
+                  <div class="d-flex justify-content-between mb-4 text-uppercase " style='  font-family: "Courier New", Courier, monospace;'>
+                    
+                    <% if(orderData.cancelreason && orderData.orderstatus === 'cancelled'){%>
+                      <h5 >reason:  </h5>
+                    <h6 class=" text-uppercase "><%=orderData.cancelreason%></h6>
+                    <% }else if (orderData.returnreason && orderData.orderstatus === 'Returned' || orderData.orderstatus === 'return requested'){ %>
+                      <h5 >reason: </h5>
+                      <h6 class=" text-uppercase"><%=orderData.returnreason%></h6>
+                    <%}%>
+                  </div>
+
+                 
+                    <%if( orderData.orderstatus == "return requested"){%>
+                      <div id="returnrequestdiv" class="d-flex justify-content-center mb-4" style="font-family: Garamond, serif;">
+                     
+                      <form id="returnRequestForm" class="col-8">
+                        <h5 class="text-uppercase " >RETURN REQUEST</h5>
+                        <select name="returnrequest" id="returnrequest" class="rounded border col-12 text-center">
+                            <option value="Returned">ACCEPT</option>
+                            <option value="return denied">DENY</option>
+                        </select>
+                        <input type="hidden" name="orderid" value="<%=orderData._id%>">
+                        <div class="m-2 text-center">
+                            <button type="button" id="returnrequestbutton" class="btn btn-danger" style="width: max-content;">APPLY</button>
+                        </div>
+                    </form>
+                  </div>
+                    <%}%>
+                 
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+<% }%>
+    
+
+
+
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    function confirmDelete(orderId,productId) {
+        const userConfirmed = confirm("Are you sure you want to cancel this item from your order?");
+
+    // Check if the user confirmed
+    if (userConfirmed) {
+        // If confirmed, redirect to the deletecartitem endpoint with the product ID
+        window.location.href = "/admin/deleteorderproduct?id=" + productId + "&orderid=" + orderId ;
+    } else {
+        // If not confirmed, do nothing or provide feedback to the user
+        console.log("Deletion canceled");
+    }
+    }
+</script>
+<script>
+  $(document).ready(function () {
+      $('#returnrequestbutton').click(function () {
+          // Serialize the form data
+          var formData = $('#returnRequestForm').serialize();
+
+          // Send the AJAX request
+          $.ajax({
+              url: '/admin/acceptreturnrequest', // Specify the URL for the form submission
+              type: 'POST', // Specify the HTTP method
+              data: formData, // Pass the serialized form data
+              success: function (response) {
+                  // Handle the success response
+                  $("#returnRequestForm").hide();
+                $("#statusbar").text(response.status);
+              }
+          });
+      });
+  });
+</script>
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+crossorigin="anonymous"
+></script>
+
+</body>
+</html>

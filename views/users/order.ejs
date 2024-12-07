@@ -1,0 +1,85 @@
+<%- include('partials/header')%>
+
+<div class="container-fluid rounded  mt-5 " style="background-color: rgb(247, 247, 247);height: 7%;">
+  <div class="row">
+    <ul class=" list-inline text-center my-auto" >
+      <% category.forEach((category, index) => { %>
+        <li class="list-inline-item m-2 ">
+          <a href="/categoryproducts?id=<%=category._id%>" class=" text-decoration-none  fw-bold cat  " style="font-family: inter_semi_bold,fallback-inter_semi_bold,Arial,sans-serif; font-size: 14px;display: flex;align-items: center;justify-content: center;
+        "><%=category.name%></a>
+        </li>
+      <% }) %>
+    </ul>
+    
+  </div>
+</div>
+
+<div class="container my-3 ">
+<table id="myTable" class=" table table-responsive " style="width: 100%; font-family: Garamond, serif;">
+  <thead>
+      <tr>
+          <th scope="col">#</th>
+          <th scope="col">DATE OF ORDER</th>
+          <th scope="col">ADDRESS</th>
+          <th scope="col">PINCODE</th>
+          <th scope="col">MOBILE</th>
+          <th scope="col">AMOUNT</th>
+          <th scope="col">PAYMENT</th>
+          <th scope="col">STATUS</th>
+          <th scope="col">DETAILS</th>
+         
+      </tr>
+  </thead>
+  <tbody>
+      <% orderData.forEach((data, index) => { %>
+          <tr>
+              <th scope="row"><%=index+1%></th>
+              <td><%= data.orderdate  %></td>
+              <td><%= data.address.address  %></td>
+              <td><%= data.address.pincode  %></td>
+              <td><%= data.address.mobile  %></td>
+              <td><%= data.total  %></td>
+              <td><%= data.paymentstatus %></td>
+              <td class="<%= 
+              (data.orderstatus === 'cancelled') ? 'bg-danger text-white' :
+              (data.orderstatus === 'completed') ? 'bg-success text-white' :
+              (data.orderstatus === 'shipped') ? 'bg-info text-white' :
+              (data.orderstatus === 'payment failed') ? 'bg-warning text-dark' :
+              (data.orderstatus === 'Returned') ? 'bg-danger text-white ' :  
+              (data.orderstatus === 'placed') ? 'bg-secondary text-white' :  ''
+            %>"><%= data.orderstatus  %></td>
+              <td><a href="/orderproducts?id=<%= data._id%>" class="btn btn-dark">View details</a></td>
+             
+          </tr>
+      <% })  %>
+  </tbody>
+</table>
+</div>
+
+
+
+<%- include('partials/footer')%>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
+<script>
+$(document).ready( function () {
+$('#myTable').DataTable();
+} );
+</script>
+<script>
+  function confirmDelete(orderId) {
+      const userConfirmed = confirm("Are you sure you want to cancel this item from your order?");
+
+  // Check if the user confirmed
+  if (userConfirmed) {
+      // If confirmed, redirect to the deletecartitem endpoint with the product ID
+      window.location.href = "/cancelorder?id=" + orderId ;
+  } else {
+      // If not confirmed, do nothing or provide feedback to the user
+      console.log("Deletion canceled");
+  }
+  }
+</script>
+</body>
+</html>

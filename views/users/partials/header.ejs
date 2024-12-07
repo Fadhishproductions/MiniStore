@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+    <link rel="stylesheet" href="../css/home1.css" type="text/css" />
+    <link rel="stylesheet" href="./css/singleproduct2.css" />
+    <link rel="stylesheet" href="./css/cartpage.css" type="text/css" />
+    <link rel="stylesheet" href="./css/singleproduct2.css" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.15/jspdf.plugin.autotable.min.js"></script>
+    <title>Document</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh; /* This ensures the body takes at least the full height of the viewport */
+        margin: 0;
+      }
+
+      /* Main content styling */
+      main {
+        flex: 1; /* This makes the main content area take up the remaining vertical space */
+      }
+      .container-fluid {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .btn {
+        border: 1px solid #c6c6c6;
+      }
+
+      /* Dropdown styling */
+      .dropdown {
+        font-size: 16px;
+        border: none;
+        outline: none;
+        color: white;
+        padding: 14px 16px;
+        background-color: inherit;
+        font-family: inherit;
+        margin: 0;
+        background-color: #ffffff;
+        min-width: 115px;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        background-color: aliceblue;
+        min-width: 160px;
+        z-index: 1; /* Ensure the dropdown is on top of other elements */
+      }
+
+      .dropdown-content a {
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+        color: black;
+        background-color: white;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+      a.cat {
+        color: rgb(7, 15, 15);
+      }
+      a.cat:hover {
+        color: rgb(38, 126, 112); /* Change this to your desired hover color */
+      }
+      .carousel-item img {
+        height: 400px; /* Set the desired height for the images */
+        object-fit: cover; /* Maintain aspect ratio and cover the entire container */
+      }
+
+      #suggestionsContainer {
+        position: absolute;
+        width: 50%;
+        max-height: 150px;
+        margin-top: 5px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        background-color: #fff;
+      }
+
+      #suggestionsContainer div {
+        padding: 8px;
+        cursor: pointer;
+      }
+
+      #suggestionsContainer div:hover {
+        background-color: #f0f0f0;
+      };
+      #loading-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity for the blur effect */
+    z-index: 9999; /* Ensure the loading container is on top of other content */
+}
+
+#loading {
+    z-index: 10000; /* Ensure the loading spinner is on top of the loading container */
+}
+    </style>
+  </head>
+  <body>
+    <header class="position-fixed fixed-top bg-white">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-2 my-auto">
+            <h5 class="brand-name text-start" >miniStore</h5>
+          </div>
+          <div class="col-md-6 col-sm-11 my-auto">
+            <form action="/search" method="post" onsubmit="return submitForm()">
+              <div class="input-group">
+                <input
+                  type="search"
+                  placeholder="Search your product"
+                  class="form-control"
+                  id="searchInput"
+                  autocomplete="off" 
+                  name="search"
+                />
+                <button class="btn btn-secondary"  type="submit">
+                  <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </form>
+            <div id="suggestionsContainer" class="rounded col-md-6 col-sm-11" style="z-index: 2;display: none;"></div>
+            <script>
+              const searchInput = document.getElementById("searchInput");
+              const suggestionsContainer = document.getElementById(
+                "suggestionsContainer"
+              );
+
+              searchInput.addEventListener("input", async () => {
+                const query = searchInput.value.trim();
+
+                // Clear previous suggestions
+                
+                suggestionsContainer.innerHTML = "";
+
+                if (query !== "") {
+                  const response = await fetch(`/autocomplete?query=${query}`);
+                  const data = await response.json();
+                  if(data.length!==0){
+                  // Handle the data and update the autocomplete suggestions
+                   data.forEach((suggestion) => {
+                    suggestionsContainer.style.display = 'block';
+                    const suggestionElement = document.createElement("div");
+                    suggestionElement.textContent = suggestion;
+
+                    suggestionsContainer.appendChild(suggestionElement);
+                    suggestionElement.addEventListener("click", () => {
+                      // Update the input field with the clicked suggestion
+                      console.log("Suggestion Clicked:", suggestion);
+                      searchInput.value = suggestion;
+                      console.log("Input Field Value:", searchInput.value);
+                    });
+
+                   
+                    });
+                  }else{
+                  suggestionsContainer.style.display = 'none';
+                  }
+                  
+                } else{
+                  suggestionsContainer.style.display = 'none';
+                }
+              });
+
+              // Hide suggestions when the input is cleared or loses focus
+              searchInput.addEventListener("blur", () => {
+                setTimeout(() => {
+                  suggestionsContainer.style.display = 'none';
+                  suggestionsContainer.innerHTML = "";
+                }, 200); // Adjust the delay based on your preference
+              });
+            </script>
+
+            <script>
+                function submitForm() {
+             var searchInput = document.getElementById('searchInput');
+             if (searchInput.value.trim() === '') {
+            // If input is empty, prevent form submission
+            return false;
+            }
+            // Allow form submission if input is not empty
+             return true;
+             }
+            </script>
+
+          </div>
+          <!-- ... (previous code) ... -->
+
+          <div class="row col my-auto">
+            <div class="col-3 col-md-3 my-auto">
+              <a class="nav-link  "  href="/">HOME </a>
+            </div>
+
+            <div class="dropdown col-4 col-md-4 text-dark">
+              <% if (varify) { %>
+              <a class="nav-link  " href="/logout"
+                >LOGOUT
+                <i class="fa fa-caret-down"></i>
+              </a>
+              <% } else { %>
+              <a class="nav-link " href="/login"
+                >LOGIN
+                <i class="fa fa-caret-down"></i>
+              </a>
+              <% } %>
+              <div class="dropdown-content">
+                <a class="nav-link  " href="/orders"> ORDERS </a>
+                <a class="nav-link  " href="/wishlist">
+                  WISHLIST
+                  <i class="fa fa-heart"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="row col-4 col-md-4 my-auto">
+              <div class="col-6 col-md-6 my-auto">
+                <a class="nav-link  " href="/useraccount">
+                  <i class="fa fa-user"></i>
+                </a>
+              </div>
+
+              <div class="col-6 col-md-6 my-auto" style="max-width: 100%">
+                <ul style="list-style-type: none; margin: 0; padding: 0">
+                  <li style="display: inline-block">
+                    <a class="nav-link  " href="/cart">
+                      <i class="fa fa-shopping-cart"></i>
+                    </a>
+                  </li>
+                  <% if( count!=0){%>
+                  <li
+                    style="display: inline-block; min-width: max-content"
+                    class="bg-secondary text-white p-1 rounded"
+                  >
+                    <span class="bg-grey"><%=count%></span>
+                  </li>
+                  <% } %>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- ... (remaining code) ... -->
+        </div>
+      </div>
+    </header>
+    <main>
+  

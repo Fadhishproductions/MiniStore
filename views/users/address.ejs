@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <title>Document</title>
+    <style>
+      .container-fluid {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .btn {
+        border: 1px solid #c6c6c6;
+      }
+
+      /* Dropdown styling */
+      .dropdown {
+        font-size: 16px;
+        border: none;
+        outline: none;
+        color: white;
+        padding: 14px 16px;
+        background-color: inherit;
+        font-family: inherit;
+        margin: 0;
+        background-color: #ffffff;
+        min-width: 115px;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        background-color: aliceblue;
+        min-width: 160px;
+        z-index: 1; /* Ensure the dropdown is on top of other elements */
+      }
+
+      .dropdown-content a {
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+        color: black;
+        background-color: white;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+a.cat{
+  color:rgb(7, 15, 15);
+}
+      a.cat:hover {
+    color: rgb(38, 126, 112); /* Change this to your desired hover color */
+}
+.carousel-item img {
+    height: 400px; /* Set the desired height for the images */
+    object-fit: cover; /* Maintain aspect ratio and cover the entire container */
+  }
+  .imgheight{
+    min-height: 400px;
+  }
+
+  @media  (max-width: 760px) {
+      .btn{
+        font-size: 10px;
+      }
+      .imgheight {
+        min-height: 100px;
+      }
+
+
+    }
+    @media (min-width: 767px) and (max-width: 987px) {
+      .imgheight {
+        min-height: 250px;
+        
+      }
+      .hover-container {
+        width:150%
+      }
+    
+    }
+
+    
+.sidebar {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #f1f1f1;
+    position:absolute;
+   min-height: 70%;
+ 
+  }
+  
+  .sidebar a ,.user{
+    display: block;
+    color: black;
+    padding: 16px;
+    text-decoration: none;
+  }
+
+   
+  .sidebar a.active {
+    background-color: #d4c7c7;
+    color: white;
+  }
+  
+  .sidebar a:hover:not(.active) {
+    background-color: #555;
+    color: white;
+  }
+  
+  div.content {
+    margin-left: 200px;
+    padding: 1px 16px;
+    min-height: 600px
+  }
+  
+    </style>
+  </head>
+  <body>
+    <header class="position-fixed fixed-top bg-white">
+      <div class="container">
+      <div class="row ">
+        <div class="col-md-8 my-auto ">
+          <h5 class="brand-name text-start ">miniStore</h5>
+        </div>
+      
+        <!-- ... (previous code) ... -->
+       
+        <div class="row  col  my-auto">
+          <div class=" col-3 col-md-3 my-auto">
+            <a class="nav-link" href="/">HOME </a>
+          </div>
+
+          <div class="dropdown col-4 col-md-4  text-dark">
+            <% if (varify) { %>
+            <a class="nav-link" href="/logout"
+              >LOGOUT
+              <i class="fa fa-caret-down"></i>
+            </a>
+            <% } else { %>
+              <a class="nav-link" href="/login"
+              >LOGIN
+              <i class="fa fa-caret-down"></i>
+              </a>
+              <% } %>
+            <div class="dropdown-content">
+              <a class="nav-link" href="/orders"> ORDERS </a>
+              <a class="nav-link" href="/wishlist">
+                WISHLIST
+                <i class="fa fa-heart"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="row col-4 col-md-4 my-auto">
+            <div class="col-6 col-md-6 my-auto ">
+              <a class="nav-link" href="/useraccount">
+                <i class="fa fa-user"></i>
+              </a>
+            </div>
+
+            <div class="col-6 col-md-6 my-auto  " style="max-width: 100% " >
+              <ul style=" list-style-type: none;margin: 0;padding: 0;">
+                <li style="display: inline-block;">
+                  <a class="nav-link " href="/cart">
+                  <i class="fa fa-shopping-cart "></i> 
+                </a>
+              </li>
+              <% if(count!=0){%>
+                <li style="display: inline-block;min-width: max-content;" class="bg-secondary text-white p-1 rounded"> <span class="bg-grey"><%=count%></span></li>
+               <% } %>
+            </ul>
+            </div>
+          </div>
+        </div>
+          
+         
+        <!-- ... (remaining code) ... -->
+      </div>
+    </div>
+    </header>
+    <div class="container-fluid rounded  mt-5 " style="background-color: rgb(247, 247, 247);height: 7%;">
+     </div>
+
+<div class="container  mt-3">
+  <div class="sidebar">
+    <h5 class="user text-uppercase"> <%=user.name %> <i class="fa fa-user"></i></h5> 
+    <a class="nav-link" href="/useraccount"> PERSONAL INFORMATION </a>
+    <a class="active" href="/address"> MANAGE ADDRESSES</a>
+    <a class="nav-link" href="/changepassword"> CHANGE PASSWORD</a>
+    <a class="nav-link" href="/wallet"> WALLET  <svg height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V192c0-35.3-28.7-64-64-64H80c-8.8 0-16-7.2-16-16s7.2-16 16-16H448c17.7 0 32-14.3 32-32s-14.3-32-32-32H64zM416 272a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg></a>
+    <a class="nav-link" href="/logout"><svg width="24" height="24" class="" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#2874F0" stroke-width="0.3" stroke="#2874F0" d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"></path></svg> LOGOUT </a>
+  </div>
+  
+  <div class="content">
+    
+    <div class="container">
+        <H5 class="m-3">MANAGE ADDRESSES</H5>
+        <button id="add" class=" form-control text-start text-primary" style="border: 1px solid #c6c6c6;"><H6>+ ADD ADDRESS</H6></button>
+
+     <form action="/addaddress" id="addAddressForm" method="post" class=" rounded  form-container mt-1" style="border: 1px solid #c6c6c6;">
+       <div class="container">
+            <H6 class="m-3  text-primary">ADD A NEW ADDRESSES</H6>
+         <div class="row ">
+            <div class="form-group m-2  col-5">
+                <label for="Name">Name:</label>
+                <input type="text" id="Name" name="name" required class="form-control mt-2" placeholder="Enter your name">
+            </div>
+
+            <div class="form-group m-2 col-5">
+                <label for="mobile">Mobile:</label>
+                 <input type="text" id="mobile" name="mobile" required class="form-control mt-2" placeholder="Enter mobile number" value="+91">
+            </div>
+
+            <div class="form-group m-2  col-5">
+                <label for="pincode">Pincode:</label>
+                 <input type="text" id="pincode" name="pincode" required class="form-control mt-2" placeholder="Enter your pincode">
+            </div>
+
+            <div class="form-group m-2  col-5">
+                <label for="locality">Locality:</label>
+                 <input type="text" id="locality" name="locality" required class="form-control mt-2" placeholder="Enter your locality">
+            </div>
+
+            <div class="form-group m-2  col-10">
+                <label for="address">Address(Area and Street):</label>
+                <textarea id="Address" name="address" class="form-control " rows="4" placeholder="Enter your address" required></textarea>
+            </div>
+
+            <div class="form-group m-2  col-5">
+                <label for="district">District/City/Town:</label>
+                 <input type="text" id="district" name="district" required class="form-control " placeholder="Enter District/City/Town">
+            </div>
+
+            <div class="form-group m-2  col-5">
+              <label for="indianStates">State:</label>
+                <select id="indianStates" class="form-select" aria-label="Select Indian State" name="state">
+                    <option selected disabled>Select State</option>
+                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                    <option value="Assam">Assam</option>
+                    <option value="Bihar">Bihar</option>
+                    <option value="Chhattisgarh">Chhattisgarh</option>
+                    <option value="Goa">Goa</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Haryana">Haryana</option>
+                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                    <option value="Jharkhand">Jharkhand</option>
+                    <option value="Karnataka">Karnataka</option>
+                    <option value="Kerala">Kerala</option>
+                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Manipur">Manipur</option>
+                    <option value="Meghalaya">Meghalaya</option>
+                    <option value="Mizoram">Mizoram</option>
+                    <option value="Nagaland">Nagaland</option>
+                    <option value="Odisha">Odisha</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Rajasthan">Rajasthan</option>
+                    <option value="Sikkim">Sikkim</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Telangana">Telangana</option>
+                    <option value="Tripura">Tripura</option>
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    <option value="Uttarakhand">Uttarakhand</option>
+                    <option value="West Bengal">West Bengal</option>
+                </select>
+                
+            </div>
+
+            <div class="form-group m-3 mb-5 col-6">
+                <label for="Gender">Address type:</label>
+                <div class="container mt-2">
+                    <input type="radio" id="home" name="type" value="home"  >
+                    <label for="home">Home</label>
+        
+                    <input type="radio" id="work" name="type" value="work"  >
+                    <label for="work">Work</label>
+                </div>
+            </div>
+
+            <div class="form-group text-start mb-3">
+                <button type="submit" id="save" class="btn  mt-2 col-2 text-white " style="background-color: #d2bdbd;">SAVE</button>
+                <button type="cancel" id="Cancel" class="btn btn-light mt-2 text-primary " >CANCEL</button>
+            </div>
+
+
+          </div>
+       </div>
+     </form>
+
+    <% if(user.address.lenght==0){%>
+     <% user.address.forEach((address)=>{  %>
+     <div class="container form-control mt-4" style="border: 1px solid #c6c6c6;">
+      <div class="row">
+        <div class="col-9">
+          <span class="fw-bold text-capitalize"> <%=address.name%> +<%=address.mobile%>  (<%=address.type%> address)</span> <br>
+        <%=address.address%>. <%=address.locality%>,<br>
+        <%=address.district%>, <%=address.state%> - <%=address.pincode%>
+       </div>
+       <div class="col-3 d-flex flex-column align-items-center">
+        <a href="/editaddress?id=<%=address._id%>" class="btn btn-light btn-block mb-2 px-3">EDIT</a>
+        <a href="/deleteaddress?id=<%=address._id%>" onclick="return askPermission(this.href)"  class="btn btn-primary btn-block ">Delete</a>
+       </div>
+      </div>
+     </div>
+<% }) %>
+<%}else{%>
+  <div class="d-flex justify-content-center align-items-center " style="height: 300px;"><h6>NO ADDRESSESS ADDED...</h6></div>
+  
+  <%}%>
+    </div>
+    
+    
+
+
+    
+
+
+  </div>
+</div>
+    <%- include('partials/footer')%>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#addAddressForm").hide();
+
+        $("#add").click(function () {
+            $("#add").hide();
+            $("#addAddressForm").show();
+        })
+
+        $("#Cancel").click(function () {
+            // Hide the form
+            $("#add").show();
+            clear();
+            $("#addAddressForm").hide();
+        });
+        
+        function clear(){
+            $("#addAddressForm input[type='text']").val("");
+            $("#addAddressForm textarea").val("");
+            $("#addAddressForm select").val("Select State");
+            $("#addAddressForm input[type='radio']").prop("checked", false);
+        }
+    })
+
+   
+</script>
+<script>
+  function askPermission(link){
+  var confirmation = confirm('ARE YOU SURE YOU WANT TO DELETE this address?');
+  
+  if(confirmation){
+    window.location.href= link;
+  }
+  else{
+    return false;
+  }
+  }
+</script>
+<script>
+  $(document).ready(function() {
+    $("#addAddressForm").submit(function(event) {
+      // Get the value of the mobile number input field
+      var mobileNumber = $("#mobile").val();
+
+      // Check if the mobile number starts with "+91"
+      if (!mobileNumber.startsWith("+91")) {
+        // Prevent the form from submitting
+        event.preventDefault();
+
+        // Show an alert to the user
+        alert("Mobile number should start with '+91'.");
+      } else if (mobileNumber.length !== 13) {
+        // Prevent the form from submitting
+        event.preventDefault();
+
+        // Show an alert to the user
+        alert("Mobile number should have 10 digits after '+91'.");
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

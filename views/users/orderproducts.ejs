@@ -1,0 +1,516 @@
+<%- include('partials/header')%>
+
+<div class="container-fluid rounded  mt-5 " style="background-color: rgb(247, 247, 247);height: 7%;">
+  <div class="row">
+    <ul class=" list-inline text-center my-auto" >
+      <% category.forEach((category, index) => { %>
+        <li class="list-inline-item m-2 ">
+          <a href="/categoryproducts?id=<%=category._id%>" class=" text-decoration-none  fw-bold cat  " style="font-family: inter_semi_bold,fallback-inter_semi_bold,Arial,sans-serif; font-size: 14px;display: flex;align-items: center;justify-content: center;
+        "><%=category.name%></a>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+</div>
+
+
+ 
+
+
+  
+
+  <section class="h-100 h-custom " style="background-color: #ffffff;">
+    <div class="container py-5 h-100">
+      <div id="whatToPrint" class="row d-flex justify-content-center align-items-center h-100 ">
+        <div class="col-12 ">
+          <div class="card card-registration card-registration-2 " style="border-radius: 15px;">
+            <div class="card-body p-0">
+              <div class="row g-0">
+                <div class="col-lg-8">
+                  <div class="p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-5">
+                      <h1 class="fw-bold mb-0 text-black" style='  font-family: "Courier New", Courier, monospace;'>Delivery Details</h1>
+                      <% if(orderData.products.length==0){%>
+                        <h1 class="text-center  mt-3 py-3   mx-auto "  style='  font-family: "Courier New", Courier, monospace;'>Order Cancelled</h1>
+                        <%   }else{ %>
+                         
+                      <h6 class="mb-0 text-muted"><%=orderData.products.length%> items</h6>
+                    </div>
+                    <hr class="my-4">
+                    
+
+                    <div class="container">
+
+                      <label for="name">Name:</label>
+                      <div class="col-12 form-group border rounded px-2 mt-1 mb-2 p-1"><%=orderData.address.name%></div>
+                      
+                      <label for="name">Mobile:</label>
+                      <div class="col-12 form-group border rounded px-2 mt-1 mb-2 p-1"><%=orderData.address.mobile%></div>
+
+                      <label for="name">Address:</label>
+                      <div class="col-12 form-group border rounded px-2 mt-1 mb-2 p-1"><%=orderData.address.address%></div>
+
+                      <label for="name">District:</label>
+                      <div class="col-12 form-group border rounded px-2 mt-1 mb-2 p-1"><%=orderData.address.district%></div>
+
+                      <label for="name">Pincode:</label>
+                      <div class="col-12 form-group border rounded px-2 mt-1 mb-2 p-1"><%=orderData.address.pincode%></div>
+                    </div>
+                    
+                   
+  
+                    <button onclick="generatePDF()" id="downloadButton" class="btn btn-primary mx-2">Download Invoice</button>
+
+  
+                 
+                  </div>
+                </div>
+                <div class="col-lg-4 bg-grey">
+                  <div class="p-5">
+                    <h3 class="fw-bold mb-5 mt-2 pt-1" style='  font-family: "Courier New", Courier, monospace;'>Order Details</h3>
+                    <hr class="my-4">
+  
+                    <table id="producttable" style="font-family: Garamond, serif;">
+                      <th class="col-7">Product</th>
+                      <th class="col-2">Price</th>
+                      <th class="col">Quantity</th>
+                      <% orderData.products.forEach((product)=>{%>
+                      <tr class="text-center ">
+                        <td>
+                          <div class="row">
+                            <div class="col-4">
+                              <img src="<%=product.productinfo.img[0]%>" class="img-fluid" alt="product image" style="width: 100%;">
+                            </div>
+                            <div class="col-8 d-flex align-items-center">
+                              <span class="fw-bold text-sm" style=" font-size: small;"><%=product.productinfo.name%></span>
+                            </div>
+                          </div>
+                        </td>
+                        <td><%=product.productinfo.price%></td>
+                        <td><%=product.quantity%></td>
+                        <td> 
+                          <button id="<%=product.product%>deletebutton" onclick="confirmDelete('<%=orderData._id%>','<%=product.product%>')" class="btn btn-light text-muted deletebutton">Cancel</i></button>
+                             <h6 id="<%=product.product%>canceltext">Cancelled</h6>
+                        </td>
+                        
+                      </tr>
+                      <%})%>
+                    </table>
+  
+                    <hr class="my-4">
+  
+
+                    <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                      <h5 class="text-uppercase">Subtotal </h5>
+                      <h5>₹ <%=orderData.subtotal%>.00</h5>
+                    </div>
+
+
+                    <hr class="my-4">
+
+                   
+
+                    <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                      <h5 class="text-uppercase">Delivery charge</h5>
+                    <%  if(!orderData.shipping){ %>
+                      <h5 class="text-success">₹ 00.00</h5>
+                   <% }else{%>
+                      <h5 >₹ <%=orderData.shipping%>.00</h5>
+                    <%}%>
+                    </div>
+
+
+                    <hr class="my-4">
+
+                    <%    if(orderData.coupon){ %>
+                      <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                        <h5 class="text-uppercase" >Coupon</h5>
+                        <h5 class="text-uppercase"><%=orderData.coupon%></h5>
+                      </div>
+    
+                      <hr class="my-4">
+  
+                    
+                 <%}%>
+
+                 <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                  <h5 class="text-uppercase" >Discount</h5>
+                  <h5 class="text-uppercase fw-bond text-success">- ₹ <%=orderData.discount%>.00</h5>
+                </div>
+
+                <hr class="my-4 " >
+
+                    <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                      <h5 class="text-uppercase">Total </h5>
+                      <h5>₹ <%=orderData.total%>.00</h5>
+                    </div>
+
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between mb-4" style="font-family: Garamond, serif;">
+                      <h5 class="text-uppercase" >Payment mode</h5>
+                      <h5 class="text-uppercase"><%=orderData.paymentstatus%></h5>
+                    </div>
+  
+                    <hr class="my-4">
+                
+                    <div class="d-flex justify-content-between mb-4 text-uppercase" style="font-family: Garamond, serif;">
+                      <h5 >Status</h5>
+                      <h5 id="statusbar" class="<%= 
+                      (orderData.orderstatus === 'cancelled') ? 'bg-danger text-white' :
+                      (orderData.orderstatus === 'completed') ? 'bg-success text-white' :
+                      (orderData.orderstatus === 'shipped') ? 'bg-info text-white' :
+                      (orderData.orderstatus === 'payment failed') ? 'bg-warning text-dark' :
+                      (orderData.orderstatus === 'Returned') ? 'bg-danger text-white' :  
+                      (orderData.orderstatus === 'placed') ? 'bg-secondary text-white' :  
+                      (orderData.orderstatus === 'return requested' || orderData.orderstatus === 'return denied') ? 'bg-danger text-white' : ''
+                    %>">
+                      <%= orderData.orderstatus %>
+                    </h5>
+                       </div>
+
+                    <div class="d-flex justify-content-between mb-4 text-uppercase " style='  font-family: "Courier New", Courier, monospace;'>
+                    
+                      <% if(orderData.cancelreason && orderData.orderstatus === 'cancelled'){%>
+                        <h5 >reason:  </h5>
+                      <h6 class=" text-uppercase "><%=orderData.cancelreason%></h6>
+                      <% }else if (orderData.returnreason && orderData.orderstatus === 'Returned' || orderData.orderstatus === 'return requested' ||  orderData.orderstatus === 'return denied'){ %>
+                        <h5 >reason: </h5>
+                        <h6 class="mt-1 text-uppercase"><%=orderData.returnreason%></h6>
+                      <%}%>
+                    </div>
+
+
+
+
+               <%  if(orderData.orderstatus !== 'cancelled' && orderData.orderstatus !== 'Returned' && orderData.orderstatus !== 'return requested' && orderData.orderstatus !== 'return denied') {%>
+
+                  <%  if(orderData.orderstatus !== 'completed') {%>
+
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-center mb-4" style="font-family: Garamond, serif;">
+                      
+                    <button class="btn btn-dark p-2 px-4" id="cancelButton" >CANCEL ORDER</button>
+                  </div>
+                    <div class="d-flex justify-content-center mb-4 text-uppercase" >
+                    <form action="/cancelorder" method="post" id="cancelForm" style="font-family: Garamond, serif;">
+                      <div class="form-group">
+                      <label for="cancelReason">Reason for Cancellation:</label>
+                      <select class="form-control" id="cancelReason" name="cancelReason" required>
+                        <option value="" disabled selected>Select a reason</option>
+                        <option value="changed mind">Changed Mind</option>
+                        <option value="price discrepancy">Price Discrepancy</option>
+                        <option value="product not received">Product Not Yet Received</option>
+                        <option value="Duplicate Order">Duplicate Order</option>
+                        <option value="Customer Request">Customer Request</option>
+                        <!-- Add more reasons as needed -->
+                      </select>
+                      <input type="hidden" name="orderid" value="<%=orderData._id%>">
+                        
+                    </div>
+
+                    <div class="form-group text-start mb-3">
+                      <button type="submit" id="cancelorder" class="btn btn-dark  mt-2  text-white " >CANCEL ORDER</button>
+                      <button type="cancel" id="Cancelorderform" class="btn btn-light mt-2 text-primary " >CANCEL</button>
+                  </div>
+
+                    </form>
+                  </div>
+
+                
+
+                  
+                  
+
+                    <% } else{%>
+
+                      <div class="d-flex justify-content-center mb-4" style="font-family: Garamond, serif;">
+                      
+                        <button class="btn btn-dark p-2 px-4" id="returnButton" >RETURN ORDER</button>
+                      </div>
+                        <div class="d-flex justify-content-center mb-4 text-uppercase" >
+                        <form action="/returnorder" method="post" id="returnForm" style="font-family: Garamond, serif;">
+                          <div class="form-group">
+                            <label for="returnReason">Select a Reason for Return:</label>
+                            <select class="form-control" id="returnReason" name="returnReason" required>
+                              <option value="" disabled selected>Select a reason </option>
+                              <option value="defective or damaged">Defective or Damaged Product</option>
+                              <option value="wrong item received">Wrong Item Received</option>
+                              <option value="size fit issues">Size or Fit Issues</option>
+                              <option value="changed mind">Changed Mind or No Longer Needed</option>
+                              <option value="unsatisfactory quality">Unsatisfactory Quality</option>
+                              <option value="not as described">Not as Described</option>
+                              <option value="late delivery">Late Delivery</option>
+                              <option value="duplicate order">Duplicate Order</option>
+                              <option value="received wrong color style">Received the Wrong Color or Style</option>
+                              <option value="product recalled">Product Recalled</option>
+                              <option value="gift return">Gift Return</option>
+                              <option value="ordered incorrectly">Ordered Incorrectly</option>
+                              <option value="incompatibility">Incompatibility</option>
+                              <option value="not satisfied with purchase">Not Satisfied with Purchase</option>
+                            </select>
+                            <input type="hidden" name="orderid" value="<%=orderData._id%>">
+                            <input type="hidden" name="total" value="<%=orderData.total%>">
+                            </div>
+
+                        <div class="form-group text-start mb-3 " >
+                          <button type="submit" id="returnorder" class="btn btn-dark  mt-2  text-white " >REQUEST RETURN </button>
+                          <button type="cancel" id="CancelReturnform" class="btn btn-light mt-2 text-primary " >CANCEL</button>
+                      </div>
+
+                        </form>
+                      </div>
+
+                      <% } %>
+
+               <% } %>
+
+
+                   
+  
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+<% }%>
+
+
+
+
+<%- include('partials/footer')%>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script>
+    // Event listener for Download Invoice button
+    function invoice(){
+      var doc = new jsPDF();
+
+var element = document.getElementById('invoice');
+doc.html(element, {
+    callback: function (doc) {
+        // Save the PDF with a filename
+        doc.save('invoice.pdf');
+    }
+});
+    }
+</script>
+    <script>
+        function confirmDelete(orderId,productId) {
+            const userConfirmed = confirm("Are you sure you want to cancel this item from your order?");
+
+        // Check if the user confirmed
+        if (userConfirmed) {
+            // If confirmed, redirect to the deletecartitem endpoint with the product ID
+            // Construct the query parameters
+            const params = new URLSearchParams();
+            params.append('id', productId);
+            params.append('orderid', orderId);
+
+            // Construct the URL
+            const url = "/deleteorderproduct?" + params.toString();
+            
+            // Make the fetch request
+            fetch(url)
+                .then(response => {
+                    // Check if the response status is OK
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    // Parse JSON response
+                    return response.json();
+                })
+                .then(data => {
+                    // Check if the response is "Cancelled"
+                    if (data === "Cancelled") {
+                        // Display an alert
+                        alert("Item has been cancelled");
+                        // Optionally, update the UI or perform further actions
+                        $('#' + productId + 'deletebutton').hide(); // Hide the cancel button
+                        $('#' + productId + 'canceltext').show(); // Show the cancellation text
+                    } else {
+                        console.log("Item was not cancelled");
+                        // Optionally, handle other responses
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                    // Optionally, show an error message to the user
+                });
+        } else {
+            // If not confirmed, do nothing or provide feedback to the user
+            console.log("Deletion canceled");
+        }
+        }
+    </script>
+  <script>
+    $(document).ready(function () {
+      var trueCount = 0;
+      <% orderData.products.forEach((product) => { %> 
+     
+      var productCancelled = '<%= product.Cancelled %>';
+      var productId = '<%= product.product %>';
+      var productInfoId = '<%= product.productinfo._id %>';
+    
+
+      if (productCancelled!=="true") {
+        trueCount++;
+        $('#' + productId + 'deletebutton').show(); // Show the cancel button
+        $('#' + productId + 'canceltext').hide(); // Hide the cancellation text
+      } else {
+       
+        $('#' + productId + 'deletebutton').hide(); // Hide the cancel button
+        $('#' + productId + 'canceltext').show(); // Show the cancellation text
+      }
+    <% }); %>
+
+    if (trueCount === 1) {
+      alert(trueCount,"count of true")
+      $('.deletebutton').prop('disabled', true);
+    }
+
+        $("#cancelForm").hide();
+
+        $("#cancelButton").click(function () {
+            $("#cancelButton").hide();
+            $("#cancelForm").show();
+        })
+
+        $("#Cancelorderform").click(function (e) {
+            // Hide the form
+            e.preventDefault();
+            $("#cancelButton").show();
+            $('#cancelForm')[0].reset();
+            $("#cancelForm").hide();
+        });
+
+        $('#cancelorder').click(function (e) {
+          e.preventDefault();
+          var isConfirmed = confirm('Are you sure you want to cancel the order?');
+
+          if(isConfirmed){
+            $('#cancelForm').submit();
+          }else{
+            $("#cancelButton").show();
+            $('#cancelForm')[0].reset();
+            $("#cancelForm").hide();
+          }
+        })
+
+       
+    })
+  </script>
+  <script>
+    $(document).ready(function () {
+        $("#returnForm").hide();
+
+        $("#returnButton").click(function () {
+            $("#returnButton").hide();
+            $("#returnForm").show();
+        })
+
+        $("#CancelReturnform").click(function () {
+            // Hide the form
+            $("#returnButton").show();
+            $('#returnForm')[0].reset();
+            $("#returnForm").hide();
+        });
+
+        $('#returnorder').click(function (e) {
+          e.preventDefault();
+          var isConfirmed = confirm('Are you sure you want to return the order?');
+
+          if(isConfirmed){
+            var formData = $('#returnForm').serialize();
+
+        // Send an AJAX request
+        $.ajax({
+            url: '/returnorder', // Specify the URL of your endpoint
+            type: 'POST', // Specify the request method
+            data: formData, // Pass the serialized form data
+            success: function (response) {
+                // Handle the success response here
+                $("#returnButton").hide();
+                $("#returnForm").hide();
+                $("#statusbar").text(response.status);
+            },
+            error: function (xhr, status, error) {
+                // Handle the error response here
+                console.error(xhr.responseText);
+            }
+        });
+          }else{
+            $("#returnButton").show();
+            $('#returnForm')[0].reset();
+            $("#returnForm").hide();
+          }
+        })
+       
+    })
+  </script>
+   <script>
+  function generatePDF() {
+    // Create a new jsPDF instance
+    var doc = new jsPDF();
+
+    // Add text to the PDF
+    doc.text("Invoice Receipt", 10, 10);
+    doc.line(10, 15, 200, 15);
+
+    // Add a horizontal line
+    var startY = 30;
+
+// Add customer information
+doc.text("Name: " + '<%=orderData.address.name%>', 10, startY);
+doc.text("Mobile: " + '<%=orderData.address.mobile%>', 10, startY + 10);
+doc.text("Address: " + '<%=orderData.address.address%>', 10, startY + 20);
+doc.text("District: " + '<%=orderData.address.district%>', 10, startY + 30);
+doc.text("Pincode: " + '<%=orderData.address.pincode%>', 10, startY + 40);
+
+    var tableY = startY + 60;
+    var columns = ["Product", "Price", "Quantity"];
+var data = [];
+
+<% orderData.products.forEach((product)=>{%>
+  data.push(["<%=product.productinfo.name%>", "<%=product.productinfo.price%>", "<%=product.quantity%>"]);
+<%})%>
+
+doc.autoTable({
+  startY: tableY,
+  head: [columns],
+  body: data,
+});
+
+    // Add more text
+    doc.text("Subtotal:  " + '<%=orderData.subtotal%>.00', 10, doc.autoTable.previous.finalY + 10);
+    doc.text("Delivery Charge:  " + '<%=orderData.shipping%>.00', 10, doc.autoTable.previous.finalY + 20);
+
+    // Check if there's a discount before adding discount text
+    if ('<%=orderData.discount%>') {
+        doc.text("Discount:  " + '<%=orderData.discount%>.00', 10, doc.autoTable.previous.finalY + 40);
+    }
+
+    doc.text("Total:  " + '<%=orderData.total%>.00', 10, doc.autoTable.previous.finalY + 50);
+    doc.text("Status: SHIPPING", 10, doc.autoTable.previous.finalY + 70);
+
+    // Add a horizontal line
+    doc.line(10, doc.autoTable.previous.finalY + 80, 200, doc.autoTable.previous.finalY + 80);
+
+    // Add text at the bottom
+    doc.text("Thank you for your purchase!", 10, doc.autoTable.previous.finalY + 90);
+
+    // Save the PDF with a filename
+    doc.save('invoice.pdf');
+}
+
+
+
+    </script>
+</body>
+</html>
+

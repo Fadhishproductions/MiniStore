@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet"
+integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+crossorigin="anonymous"
+/>
+<link
+href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+rel="stylesheet"
+/>
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+rel="stylesheet"
+/>
+<script src= 
+"https://cdn.jsdelivr.net/npm/moment@2.29.3/moment.min.js"> 
+    </script> 
+
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+ 
+.sidebar a.active {
+  background-color: #f03b17;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+.btn {
+        border: 1px solid #c6c6c6;
+      }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <a class="" href="/admin">DASHBOARD</a>
+   <a class="nav-link" href="/admin/user"> USERS</a>
+  <a class="nav-link" href="/admin/product"> PRODUCTS </a>
+  <a class="nav-link" href="/admin/category"> CATEGORY</a>
+  <a class="nav-link" href="/admin/Company">BRAND</a>
+  <a class="nav-link" href="/admin/order"> ORDERS </a>
+  <a class="nav-link" href="/admin/salesreport"> SALES REPORT </a>
+  <a class="nav-link" href="/admin/slides">SLIDES</a>
+  <a class="active" href="/admin/coupon">COUPONS</a>
+</div>
+
+<div class="content">
+  <%- include('partials/header')%>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 m-2 btn-danger">
+                <a href="/admin/addcoupon" class="btn btn-danger ">ADD COUPON</a>
+              </div>
+              
+            <table id="myTable"  class=" mx-auto text-center " style="font-size: small;" >
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>COUPONCODE</th>
+                        <th>EXPIRY DATE</th>
+                        <th>MIN PRICE</th>
+                        <th>DISCOUNT(%)</th>
+                        <th>STATUS</th>
+                        <th>Valid/Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% coupon.forEach((coupon, index) => { %>
+                        <tr style="height: 20vh;" >
+                            <td class="fw-bold"><%= index + 1 %></td>
+                            <td><%= coupon.Couponcode %></td>
+                            
+                       
+                        
+                            <td id="date<%=coupon._id%>"><%= coupon.expirydate %></td>
+                            <td><%= coupon.mindiscount %></td>
+                            <td><%= coupon.discount %></td>
+                            <td><%= coupon.status %></td>
+                            <td><div class="row">
+                                <div class="col-md-6 mt-2  btn-danger">
+                                    <% if(coupon.status==="valid"){%>
+                                        <a href="/admin/invalidcoupon?id=<%=coupon._id %>" onclick="return askPermission(this.href);" class="btn btn-danger ">INVALIDATE</a>
+                                    <%}else{%>
+                                    <a href="/admin/validcoupon?id=<%=coupon._id %>" onclick="return askPermission(this.href);" class="btn btn-danger ">VALIDATE</a>
+                                    <%}%>
+                                </div>
+                                  <div class="col-3 mt-2 btn-danger">
+                                    <a href="/admin/editcoupon?id=<%=coupon._id %>"  onclick="return askPermission(this.href);" class="btn btn-danger " >Edit</a>
+                                  </div>
+                               </div>
+                            </td>
+                        </tr>
+                        
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+       </div>
+
+       <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+       <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
+<script>
+  $(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>
+<script>
+  function askPermission(link) {
+    // Display a confirmation dialog
+    var confirmation = confirm("Are you sure ?");
+
+    // If the user clicks "OK," allow navigation
+    if (confirmation) {
+      window.location.href = link;
+    }
+    // If the user clicks "Cancel," prevent navigation
+    else {
+      return false;
+    }
+  }
+</script>
+<script>
+  // Define the function to display the formatted expiry date
+  function displayExpiryDate(expiryDate, couponId) {
+      let formattedDate = moment(expiryDate, "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ").format('dddd, Do MMM YYYY, h:mm:ss A');
+      document.getElementById('date' + couponId).innerHTML = formattedDate;
+  }
+
+  <% coupon.forEach((coupon) => { %>
+      displayExpiryDate('<%= coupon.expirydate %>', '<%= coupon._id %>');
+  <% }); %>
+</script>
+
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+crossorigin="anonymous"
+></script>
+<script>
+  
+</script>
+</body>
+</html>

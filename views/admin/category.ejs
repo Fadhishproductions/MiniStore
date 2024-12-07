@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet"
+integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+crossorigin="anonymous"
+/>
+<link
+href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+rel="stylesheet"
+/>
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+rel="stylesheet"
+/>
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+ 
+.sidebar a.active {
+  background-color: #f03b17;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+.btn {
+        border: 1px solid #c6c6c6;
+      }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <a class="" href="/admin">DASHBOARD</a>
+   <a class="nav-link" href="/admin/user"> USERS</a>
+  <a class="nav-link" href="/admin/product"> PRODUCTS </a>
+  <a class="active" href="/admin/category"> CATEGORY</a>
+  <a class="nav-link" href="/admin/Company">BRAND</a>
+  <a class="nav-link" href="/admin/order"> ORDERS </a>
+  <a class="nav-link" href="/admin/salesreport"> SALES REPORT </a>
+  <a class="nav-link" href="/admin/slides">SLIDES</a>
+  <a class="nav-link" href="/admin/coupon">COUPONS</a>
+</div>
+
+<div class="content">
+  <%- include('partials/header')%>
+  <main class="container mt-3">
+    <div class="col-md-3 m-2 btn-danger">
+        <a href="/admin/addcategory" class="btn btn-danger ">ADD</a>
+      </div>
+
+    <table id="myTable" class="mx-5 " style="width: 100%;">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">CATEGORY NAME</th>
+                <th scope="col">DESCRIPTION</th>
+                <th scope="col">DELETE</th>
+                <th>OFFER</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% category.forEach(function(category,index){ %>
+    <tr>
+    <th scope="row"><%= index+1 %></th>
+    <td><%= category.name%></td>
+    <td><%= category.
+      description%></td>
+
+    <td><div class="row">
+        <div class="col mt-2 btn-danger">
+            <a href="/admin/deletecategory?id=<%=category._id %>" onclick="return askPermission(this.href);" class="btn btn-danger ">DELETE</a>
+          </div>
+          <div class="col mt-2 btn-danger">
+            <a href="/admin/editcategory?id=<%=category._id %>"  onclick="return askPermission(this.href);" class="btn btn-danger " >Edit</a>
+          </div>
+       </div>
+    </td>
+
+    <td>
+      <button id="addofferbutton<%=category._id %>"  onclick="addoffer('<%=category._id %>','<%=category.name %>')" <% if (category.isoffer && category.isoffer !== null) { %> style="display: none;" <% } %>  class="col mt-2 btn btn-danger addofferbutton">ADD OFFER</button>
+         
+      <button id="removeofferbutton<%=category._id %>" onclick="removeoffer('<%=category._id %>')" <% if (!category.isoffer || category.isoffer == 0) { %> style="display: none;" <% } %> class="col mt-2 btn btn-danger " >REMOVE OFFER</button>
+      
+    </td>
+    
+    </tr>
+        <%  }); %>
+        </tbody>
+    </table>
+    
+
+</main>
+</div>
+
+<div>
+  <form  id="offerform"  class="form-container mt-1 col-4  rounded p-3 " style="position: absolute; top: 50%;left: 50%;transform: translate(-50%, -50%);display: none;box-shadow: 4px 10px 10px rgba(78, 72, 72, 0.5);background-color: #f1f1f1;">
+   <div class="form-group">
+   
+   </div>
+   <div class="form-group">
+    <p class="text-warning" id="offererror"></p>
+     <label for="id">CATEGORY NAME:</label>
+     <input type="text" id="productname" name="name" disabled required class="form-control">
+     <input type="hidden" name="id" id="productid">
+   </div>
+   <div class="form-group">
+     <label for="offer">OFFER (%):</label>
+     <input type="number" id="offer" name="offer" required class="form-control">
+   </div>
+
+  
+   <div class="form-group text-center">
+     <button  type="submit" class="btn  mt-2">ADD OFFER</button>
+   </div>
+   <!-- <div class="col-md-3 mt-2">
+     <a href="/" class="btn btn-danger ">LOGIN</a>
+   </div> -->
+ </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
+<script>
+$(document).ready( function () {
+$('#myTable').DataTable();
+} );
+</script>
+
+<script>
+  function askPermission(link){
+  var confirmation = confirm('ARE YOU SURE YOU WANT TO DELETE A CATEGORY ?');
+  
+  if(confirmation){
+    window.location.href= link;
+  }
+  else{
+    return false;
+  }
+  }
+</script>
+
+<script>
+  function addoffer (productid,productname){
+    
+  $("#productname").val(productname);
+  $("#productid").val(productid);
+  
+  }
+  
+  function removeoffer (productid){
+    if (confirm("Are you sure you want to remove offer?")) {
+    $.ajax({
+            url: "/admin/removecategoryoffer",
+            type: "POST",
+            data: { id: productid }, 
+            contentType: 'application/x-www-form-urlencoded',
+            success:(response)=>{
+              alert(response.msg)
+              console.log(response)
+              $("#removeofferbutton"+productid).hide();
+              $("#addofferbutton"+productid).show();
+            }
+          })
+        }
+  }
+  
+  
+  $(document).ready(function() {
+          // Show the form when a button is clicked
+          $('.addofferbutton').click(function(e) {
+              e.stopPropagation(); // Prevent event bubbling to the document
+              $('#offerform').show();
+          });
+  
+          // Hide the form when the document body is clicked
+          $('body').click(function(e) {
+              if (!$(e.target).closest('#offerform').length) {
+                $("#offer").val('')
+                  $('#offerform').hide();
+              }
+          });
+  
+          // Prevent hiding the form when clicking inside the form
+          $('#offerform').click(function(e) {
+              e.stopPropagation(); // Prevent event bubbling to the document
+          });
+      });
+
+
+
+ $("#offerform").submit((e) => {
+    e.preventDefault();
+
+    const offer = $("#offer").val()
+    // Ask for permission
+    if( offer<5 || offer>60){
+      $('#offererror').text('enter percentage (5-60)!');
+      
+    }else{
+    // Ask for permission
+    if (confirm("Are you sure you want to apply offer?")) {
+        $.ajax({
+            url: "/admin/addcategoryoffer",
+            type: "POST",
+            data: $("#offerform").serialize(),
+            contentType: 'application/x-www-form-urlencoded',
+            success: (response) => {
+                $('#offerform').hide();
+                $("#offer").val('');
+                alert(response.msg);
+                console.log(response);
+                const id = $("#productid").val();
+                $("#removeofferbutton"+id).show();
+                $("#addofferbutton"+id).hide();
+            }
+        });
+    }}
+});
+</script>
+
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+crossorigin="anonymous"
+></script>
+</body>
+</html>

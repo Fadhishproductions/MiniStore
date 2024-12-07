@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet"
+integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+crossorigin="anonymous"
+/>
+<link
+href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+rel="stylesheet"
+/>
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+rel="stylesheet"
+/>
+<link href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css" rel="stylesheet">
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+  padding: 0;
+  
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+ 
+.sidebar a.active {
+  background-color: #f03b17;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+.btn {
+        border: 1px solid #c6c6c6;
+      }
+      output{
+  width: 100%;
+  min-height: 150px;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 15px;
+  position: relative;
+  border-radius: 5px;
+}
+
+output .image{
+  height: 150px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  position: relative;
+}
+
+output .image img{
+  height: 100%;
+  width: 100%;
+}
+
+output .image span {
+  position: absolute;
+  top: -4px;
+  right: 4px;
+  cursor: pointer;
+  font-size: 22px;
+  color: white;
+}
+
+output .image span:hover {
+  opacity: 0.8;
+}
+
+output .span--hidden{
+  visibility: hidden;
+}
+#previewContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <a class="" href="/admin">DASHBOARD</a>
+   <a class="nav-link" href="/admin/user"> USERS</a>
+  <a class="active" href="/admin/product"> PRODUCTS </a>
+  <a class="nav-link" href="/admin/category"> CATEGORY</a>
+  <a class="nav-link" href="/admin/Company">BRAND</a>
+  <a class="nav-link" href="/admin/order"> ORDERS </a>
+  <a class="nav-link" href="/admin/salesreport"> SALES REPORT </a>
+  <a class="nav-link" href="/admin/slides">SLIDES</a>
+  <a class="nav-link" href="/admin/coupon">COUPONS</a>
+</div>
+
+<div class="content">
+
+  <%- include('partials/header')%>
+
+  <main class="container mt-3">
+   
+      <div class="mid bg-light p-3 rounded mx-auto">
+          
+          <form action="/admin/addproduct" method="post" onsubmit="return validateForm()" enctype="multipart/form-data" class="form-container mt-1">
+            <div class="form-group">
+             
+              <div class="text-warning " id="errordis"><%= data %></div>
+              <label for="Name">Name:</label>
+              <input type="text" id="Name" name="name" value="<%=old.name%>" required class="form-control" placeholder="Enter name">
+            </div>
+
+            <div class="form-group">
+              <label for="price">Price:</label>
+              <input type="number" id="priceInput" name="price" value="<%=old.price%>" placeholder="Enter price in rupees" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label for="company">Company:</label>
+              <select id="company" name="company" class="form-control" required>
+                  <option value="" disabled selected>Select Company</option>
+                  <% company.forEach(function(company) { %>
+                      <option value="<%= company._id %>"><%= company.name %></option>
+                  <% }); %>
+              </select>
+          </div>
+
+            <div class="form-group" id="catdiv" style="display: none;">
+              <label for="category">Category:</label>
+              <select id="categoryDropdown" name="category" class="form-control" required>
+                  <option value="" disabled selected>Select Category</option>
+                  <% category.forEach(function(category) { %>
+                      <option value="<%= category._id %>"><%= category.name %></option>
+                  <% }); %>
+              </select>
+          </div>
+          
+        
+            <div class="form-group">
+              <label for="stock">Stock:</label>
+              <input type="number" id="stock" name="stock" value="<%=old.stock%>" required class="form-control" placeholder="Enter Quantity">
+            </div>
+
+            <div class="form-group">
+              <label for="Status">Status:</label>
+              <select id="categoryDropdown" name="status" class="form-control">
+                <option value="" disabled selected>Select a Status</option>
+                <option value="published" <%= "published" === old.status ? 'selected' : '' %>>Published</option>
+                <option value="draft"  <%= "draft" === old.status ? 'selected' : '' %>>Draft</option>
+            </select>
+            </div>
+            <div class="form-group">
+              <label for="description">Description:</label>
+              <input type="text" id="description" name="description" value="<%=old.description%>" required class="form-control" placeholder="Enter description">
+            </div>
+
+            <div class="form-group">
+              <label for="Profession">Images:</label>
+              <input type="file" id="images" name="images" accept="image/jpeg, image/png, image/jpg" value="<%=old.images%>" required class="form-control" multiple>
+              <output class="m-2"></output>
+              <div id="previewContainer" style="max-height: 2%;"></div>
+             
+            </div>
+
+            <div class="form-group text-center">
+              <button type="submit"  class="btn btn-primary mt-2">ADD</button>
+            </div>
+
+          </form>
+        </div>
+
+  </main>
+ 
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  function validateForm() {
+    var fileInput = document.getElementById('images');
+    var selectedFiles = fileInput.files;
+    var price = document.getElementById('priceInput').value;
+
+    //check the price is greater than zero
+    if(price<0){
+      document.getElementById("errordis").innerHTML='The price have to above 0 !'
+        return false; // Prevent form submission
+    }
+    // Check if exactly 4 files are selected
+    if (selectedFiles.length !== 4) {
+        document.getElementById("errordis").innerHTML='Please select exactly 4 files.'
+        return false; // Prevent form submission
+    }
+
+    // Define allowed file extensions
+    var allowedExtensions = ['jpg', 'jpeg', 'png'];
+
+    // Check if all selected files have allowed extensions
+    for (var i = 0; i < selectedFiles.length; i++) {
+        var file = selectedFiles[i];
+        var fileName = file.name.toLowerCase();
+        var fileExtension = fileName.split('.').pop(); // Get the file extension
+        
+        if (!allowedExtensions.includes(fileExtension)) {
+            document.getElementById("errordis").innerHTML='Please select only image files with extensions: ' + allowedExtensions.join(', ');
+            return false; // Prevent form submission
+        }
+    }
+
+    return true; // Allow form submission
+}
+</script>
+<script>
+  $(document).ready(function() {
+      $('#company').change(function() {
+        $("#catdiv").show()
+          var companyId = $(this).val();
+          // Make an AJAX call to fetch the categories associated with the selected company
+          $.ajax({
+              url: '/admin/getCategories', // Replace this with your server endpoint to fetch categories
+              type: 'GET',
+              data: { companyId: companyId },
+              success: function(categories) {
+                $('#categoryDropdown').empty();
+                if (categories.length === 0) {
+                    $('#categoryDropdown').append('<option value="" disabled selected > No categories available</option>');
+                } else {
+                  $('#categoryDropdown').append('<option value="" disabled selected > Select categories</option>');
+                    categories.forEach(function(category) {
+                        $('#categoryDropdown').append('<option value="' + category._id + '">' + category.name + '</option>');
+                    });
+                }
+            },
+              error: function(err) {
+                  console.error('Error fetching categories: ', err);
+              }
+          });
+      });
+  });
+</script>
+<script>
+  const output = $("output");
+  const input = $("#images");
+  let imagesArray = [];
+
+  input.on("change", () => {
+    imagesArray = [];
+      const files = input[0].files;
+      for (let i = 0; i < files.length; i++) {
+          imagesArray.push(files[i]);
+      }
+      displayImages();
+  });
+
+  function displayImages() {
+      let images = "";
+      imagesArray.forEach((image, index) => {
+          images += `<div class="image">
+              <img src="${URL.createObjectURL(image)}" alt="image">
+              <span onclick="deleteImage(${index})">&times;</span>
+            </div>`;
+      });
+      output.html(images);
+  }
+
+  function deleteImage(index) {
+    imagesArray.splice(index, 1);
+    displayImages();
+
+    // Clear the file input
+    input.val('');
+
+    // Create a new FileList object
+    let newFileList = new DataTransfer();
+
+    // Add files back to the new FileList object
+    imagesArray.forEach(file => {
+        newFileList.items.add(file);
+    });
+
+    // Set the files to the file input
+    input[0].files = newFileList.files;
+
+    // Dispatch a change event to update the file input
+    input.trigger('change');
+}
+</script>
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+crossorigin="anonymous"
+></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script> -->
+<!-- <script>
+  // Function to handle file input change event
+  document.getElementById('images').addEventListener('change', function(event) {
+    var files = event.target.files; // Get the selected files
+
+    // Loop through selected files
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        var image = new Image();
+        image.src = e.target.result;
+
+        // Append image element to the preview container
+        document.getElementById('previewContainer').appendChild(image);
+
+        // Initialize Cropper for the image
+        var cropper = new Cropper(image, {
+          aspectRatio: 1 / 1, // Set aspect ratio for cropping
+          viewMode: 1 // Enable crop box to cover the entire preview container
+        });
+      };
+
+      reader.readAsDataURL(file); // Read the file as a data URL
+    }
+  });
+</script> -->
+
+</body>
+</html>
