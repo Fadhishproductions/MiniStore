@@ -12,7 +12,7 @@ const auth = require('../middlewares/auth');
 
 
 router.set('view engine', 'ejs');
-router.set('views', '../MINISTORE/views/users');
+router.set('views', './views/users');
 
 
 

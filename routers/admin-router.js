@@ -4,7 +4,7 @@ const router = express();
 const upload = require('../middlewares/multer')
 
 router.set('view engine','ejs');
-router.set('views','../ministore/views/admin');
+router.set('views','./views/admin');
 
 const admin = require('../controllers/admincontroller');
 const Coupon = require('../controllers/couponcontroller');
