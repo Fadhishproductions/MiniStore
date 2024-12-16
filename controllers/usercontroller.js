@@ -790,7 +790,8 @@ console.log("in checkout page")
          console.log("items=",cartitems)
 console.log("sum=",totalsum)
 
-const coupons = await Coupon.find();
+const coupons = await Coupon.find().sort({ _id: -1 });
+console.log("coupons",coupons)
 let balance = 0;
 const userdata = await User.findOne({_id:userId});
 if(userdata.wallet){

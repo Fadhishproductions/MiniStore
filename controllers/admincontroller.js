@@ -22,6 +22,7 @@ const loadlogin = async (req,res)=>{
 
 const varifylogin = async(req,res)=>{
     try {
+        console.log(req.body)
         const email = req.body.email;
         const password = req.body.password;
         console.log(password)

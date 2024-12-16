@@ -8,7 +8,7 @@
               <div class="card card-registration card-registration-2 " style="border-radius: 15px;">
                 <div class="card-body p-0">
                   <div class="row g-0">
-                    <div class="col-lg-8">
+                    <div class="col-lg-7">
                       <div class="p-5">
                         <div class="d-flex justify-content-between align-items-center mb-5">
                           <h1 class="fw-bold mb-0 text-black">Delivery address</h1>
@@ -136,7 +136,7 @@
                       </div>
                     
                     </div>
-                    <div class="col-lg-4 bg-grey">
+                    <div class="col-lg-5 bg-grey">
                       <div class="p-5">
                         <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
                         <hr class="my-4">
@@ -203,17 +203,27 @@
                           <button id="applyCouponBtn" onclick="applyCoupon('<%=totalsum%>')" class="btn btn-primary m-2">Apply coupon </button>
                           <button id="removeCouponBtn" class="btn btn-secondary m-2" style="display:none;">Remove Coupon</button>
                            
-                          <div class="form-control form-control-lg " style=" height: 50vh;  overflow: auto;">
-                            <% coupons.forEach((coupon)=>{%> 
-                            <div class="row m-1 " >
-                             <div class="col-7 text-start couponcodes"><h6><%=coupon.Couponcode%></h6></div> 
-                             <div class="col-2 couponcodes"><h6 class="text-warning"><%=coupon.discount%>%</h6></div> 
-                             <div class="col-2"> <button onclick="enterCoupon('<%=coupon.Couponcode%>','<%=coupon.discount%>')" class="btn btn-light border border-danger">Select</button></div> 
-                              </div>
+                          <div class="form-control form-control-lg" style="height: 50vh; overflow: hidden;">
+                            <% coupons.forEach((coupon) => { %>
+                            <div class="row align-items-center m-2 p-2 border border-secondary rounded">
+                                <div class="col-7 text-start">
+                                    <h6 class="fw-bold m-0 text-primary"><%= coupon.Couponcode %></h6>
+                                </div>
+                                <div class="col-3 text-center">
+                                    <h6 class="text-warning m-0"><%= coupon.discount %>% Off</h6>
+                                </div>
+                                <div class="col-2 text-end">
+                                    <button 
+                                        onclick="enterCoupon('<%= coupon.Couponcode %>', '<%= coupon.discount %>')" 
+                                        class="btn btn-danger btn-sm">
+                                        Select
+                                    </button>
+                                </div>
+                            </div>
                             <hr class="my-2">
-                            <% })%>
-                            
-                          </div>
+                            <% }) %>
+                        </div>
+                        
                         </div>
 
                       </div>

@@ -58,9 +58,10 @@
                     </div>
                     
                    
-  
-                    <button onclick="generatePDF()" id="downloadButton" class="btn btn-primary mx-2">Download Invoice</button>
+                  <% if(orderData.orderstatus === 'completed') {%>
 
+                    <button onclick="generatePDF()" id="downloadButton" class="btn btn-primary mx-2">Download Invoice</button>
+                  <% }%>
   
                  
                   </div>
@@ -370,8 +371,7 @@ doc.html(element, {
     <% }); %>
 
     if (trueCount === 1) {
-      alert(trueCount,"count of true")
-      $('.deletebutton').prop('disabled', true);
+       $('.deletebutton').prop('disabled', true);
     }
 
         $("#cancelForm").hide();
